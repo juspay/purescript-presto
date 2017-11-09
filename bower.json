@@ -4,7 +4,9 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "output"
+    "output",
+    "test",
+    "tests"
   ],
   "dependencies": {
     "purescript-prelude": "^3.1.0",
@@ -24,5 +26,11 @@
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",
     "purescript-spec": "^1.0.0"
-  }
+  },
+  "homepage": "https://github.com/juspay/purescript-presto",
+  "description": "eDSL for writing Apps",
+  "authors": [
+    "Juspay Technologies"
+  ],
+  "license": "MIT"
 }
