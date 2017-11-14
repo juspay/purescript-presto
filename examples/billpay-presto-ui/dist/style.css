@@ -1,0 +1,109 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.parent {
+  display: flex;
+}
+
+.sidePage {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #ccc;
+}
+
+.sideArtboard {
+  margin: 0 auto;
+  cursor: pointer;
+  background: #eee;
+  text-align: center;
+  padding-top: 10px;
+  border-bottom: 1px solid #ccc;
+  width: 250px;
+  height: 40px;
+  word-wrap: break-word;
+}
+
+.sideArtboard:hover {
+  background: #aaa;
+}
+
+.side {
+  text-align: center;
+  background: #eee;
+  padding: 20px;
+  width: 40%;
+  height: 100%;
+  float: left;
+}
+
+.image > .content {
+  position: relative;
+  height: 640px;
+  width: 360px;
+  margin-left: 25px;
+  margin-top: 93px;
+}
+
+.content {
+  height: 100%;
+  width: 100%;
+}
+
+.image {
+  height: 840px;
+  background-image: url(https://sproutup.info/img/screenshots/nexus5.png);
+  background-size: contain;
+  width: 410px;
+  margin-top: -50px;
+  border-top: none;
+  border-bottom: none;
+  overflow-y: hidden;
+  clear:both;
+}
+
+input {
+  border: none;
+  outline: none;
+  font-size: 18px;
+}
+
+.space {
+  text-align: right;
+  display: inline-block;
+}
+
+.tab-titleWrapper {
+}
+
+.menuItem {
+  padding-top: 20px;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  background: #eee;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: #aaa;
+}
+
+.tab-contentWrapper {
+  position: relative;
+}
+
+.tab-content {
+  position: absolute;
+  display: none;
+}
+
+.tab-content-active {
+  display: block;
+}

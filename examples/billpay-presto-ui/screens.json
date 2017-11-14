@@ -1,0 +1,18 @@
+{
+  "pages": {
+    "recharge": [
+      "SplashScreen",
+      "ChooseOperatorScreen",
+      "AskAmountScreen",
+      "AskMobileNumberScreen",
+      "ResultScreen"
+    ]
+  },
+  "artboards": [
+    "SplashScreen",
+    "ChooseOperatorScreen",
+    "AskAmountScreen",
+    "AskMobileNumberScreen",
+    "ResultScreen"
+  ]
+}

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+NC='\033[0m'
+
+if ! [[ -x "$(command -v npm)" ]]
+then
+	echo "Error: Install node and npm"
+	exit 1
+fi
+
+do_cmd() {
+	status=`$1`
+	if [ $? -ne 0 ]
+	then
+		printf "${RED}'$1': failed\n${NC}"
+		exit 1
+	else
+		printf "${GREEN}'$1': successful\n${NC}"
+	fi
+}
+
+check() {
+	if [[ -x "$(command -v $1)" ]]
+	then
+	    printf "${GREEN}'$1' is installed\n${NC}"
+	else
+		do_cmd "npm i -g $2"
+	fi
+}
+
+check "bower" "bower"
+check "purs" "purescript"
+check "pulp" "pulp"
+
+do_cmd "npm i"
+do_cmd "cp -fr @juspay node_modules"
+do_cmd "bower i"
+do_cmd "pulp build"

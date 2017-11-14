@@ -1,0 +1,33 @@
+{
+  "name": "billpay-presto-ui",
+  "homepage": "https://github.com/juspay/presto-billpay-demo",
+  "description": "Bill Payments Demo App",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.0.0",
+    "purescript-console": "^3.0.0",
+    "purescript-aff": "^3.0.0",
+    "purescript-transformers": "^3.2.0",
+    "purescript-arrays": "^4.0.1",
+    "purescript-foreign-generic": "4.3.0",
+    "purescript-free": "^4.1.0",
+    "purescript-presto": "https://github.com/juspay/purescript-presto.git",
+    "purescript-monad-loops": "^0.4.0",
+    "purescript-folds": "^3.1.0",
+    "purescript-newtype": "^2.0.0",
+    "purescript-records": "^1.0.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
+  },
+  "version":"0.1"
+}

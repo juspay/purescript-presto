@@ -1,0 +1,137 @@
+<html>
+<head>
+	<title>MYSTIQUE</title>
+	<script src="./socket.js"></script>
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'/>
+	<meta charset="utf-8"/>
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+</head>
+<body>
+<script type="text/javascript">
+	const ENV = "PROD";
+	let pagesPopulated = {};
+	let content = document.createElement('div');
+	content.id = "content";
+	content.className = "content";
+
+	if (ENV == "DEV") {
+		let parent = document.createElement('div');
+		parent.className = 'parent';
+		let side = document.createElement('div');
+		side.id = 'side';
+		side.className = 'side';
+		let image = document.createElement('div');
+		image.className = 'image';
+		document.body.appendChild(parent);
+		parent.appendChild(side);
+		parent.appendChild(image);
+		image.appendChild(content);
+	} else {
+		document.body.appendChild(content);
+	}
+
+	function addPages() {
+		if(!window.pages){
+			setTimeout(addPages, 5000);
+			return;
+		}
+		let pages = window.pages;
+		let side = document.getElementById('side');
+		if (!side) {
+			return;
+		}
+		for(let i in pages) {
+			let page = pages[i];
+			if(!pagesPopulated[i]){
+				let div = document.createElement('div');
+				div.innerHTML =  i;
+				div.className = "sidePage";
+				side.appendChild(div);
+				pagesPopulated[i] = {};
+			}
+			for(let j in page){
+				let artboard = page[j];
+				if(typeof artboard != "string")
+					continue;
+				if(pagesPopulated[i][artboard])
+					continue;
+				let div = document.createElement('div');
+				div.innerHTML =  artboard;
+				div.className = "sideArtboard";
+				div.addEventListener("click", ()=>{
+					window.__duiShowScreen(null, {screen: artboard});
+				});
+				side.appendChild(div);
+				pagesPopulated[i][artboard] = true;
+			}
+		}
+	}
+
+	var reloadApp = function() {
+		var headID = document.getElementsByTagName("head")[0];
+	    var newScript = document.createElement('script');
+	    newScript.type = 'text/javascript';
+	    newScript.id = 'mystique';
+	    newScript.src = '/dist/index_bundle.js';
+	    newScript.onload = addPages;
+	    headID.appendChild(newScript);
+	}
+
+	var currentHash = null
+	var onSocketMsg = {
+		hot: function() {
+			console.log("hot");
+		},
+		invalid: function() {
+			console.log("App updated. Recompiling...");
+		},
+		hash: function(hash) {
+			currentHash = hash;
+			console.log(hash);
+		},
+		"still-ok": function() {
+			console.log("App ready.");
+		},
+		ok: function() {
+			reloadApp();
+		},
+		warnings: function(warnings) {
+			console.log("Warnings while compiling.");
+			reloadApp();
+		},
+		errors: function(errors) {
+			console.log("App updated with errors. No reload!");
+
+			if (Android)
+			Android.throwError(errors[0]);
+		},
+		"proxy-error": function(errors) {
+			console.log("Could not proxy to content base target!");
+
+			if (Android)
+			Android.throwError(errors[0]);
+		},
+		close: function() {
+			console.log("Disconnected.");
+		},
+		"log-level": function (data) {
+			console.log(data)
+		}
+	}
+	window.onload = function() {
+		var sock = new SockJS('/sockjs-node');
+		sock.onopen = function() {
+		   console.log('open');
+		};
+		sock.onmessage = function(e) {
+		  var msg = JSON.parse(e.data);
+			onSocketMsg[msg.type](msg.data)
+		};
+		sock.onclose = function() {
+		   console.log('close');
+		};
+	}
+</script>
+</body>
+</html>
