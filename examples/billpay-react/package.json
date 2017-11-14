@@ -1,0 +1,33 @@
+{
+  "name": "billpay-react",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "webpack --progress --colors --optimize-minimize",
+    "compile-psc": "pulp build",
+    "start": "npm run start-psc & webpack-dev-server --watch",
+    "start-psc": "pulp --watch build"
+  },
+  "dependencies": {
+    "es6-promise": "^4.1.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-scripts": "^1.0.17"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-function-source": "^1.0.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-plugin-transform-react-jsx-source": "^6.22.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "css-loader": "^0.28.7",
+    "image-webpack-loader": "^3.4.2",
+    "react-hot-loader": "^1.3.0",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-shell-plugin": "^0.5.0"
+  }
+}
