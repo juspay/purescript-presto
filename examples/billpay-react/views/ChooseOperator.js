@@ -13,7 +13,7 @@ class Header extends Component {
 class Operator extends Component {
   render() {
     return (
-      <div className = {styles.operatorList} onClick = {this.props.callBack}>
+      <div className = {styles.operatorList} onClick = {()=>{this.props.callBack(this.props.operatorName)}}>
         <div className = {styles.operator}>
           <img className = {styles.image} 
             src={require("../dist/"+(this.props.operatorName).toLowerCase()+".png")} 
@@ -33,8 +33,8 @@ class ChooseOperator extends Component {
     this.onOperatorSelected = this.onOperatorSelected.bind(this);
   }
 
-  onOperatorSelected() {
-    window.__runDuiCallback(JSON.stringify({tag:"OperatorSelected"}))
+  onOperatorSelected(operatorName) {
+    window.__runDuiCallback(JSON.stringify({tag:"OperatorSelected",contents:operatorName}))
   }
 
   render() {
