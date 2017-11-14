@@ -11,12 +11,14 @@ constructor(state) {
   }
   render() {
     return (
-      <div className = {styles.status}>
-        <img height = "100" 
-          src={require("../dist/illustration2.png")} 
-          alt = {require("../dist/logo.svg")}/>
-        <h1>Success</h1>
-        <p>You have successfully recharged {this.mobileNumber} with amount Rs {this.amount}.</p>
+      <div className = {styles.background}>
+        <div className = {styles.status}>
+          <img height = "100" 
+            src={require("../dist/illustration2.png")} 
+            alt = {require("../dist/logo.svg")}/>
+          <h1>Success</h1>
+          <p>You have successfully recharged {this.mobileNumber} with amount Rs {this.amount}.</p>
+        </div>
       </div>
     );
   }

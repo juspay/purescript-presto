@@ -43,9 +43,11 @@ class ChooseOperator extends Component {
       (operator)=> <Operator operatorName={operator} callBack = {this.onOperatorSelected}/>
       );
     return (
-      <div className = {styles.chooseOperator}>
-        <Header name="Choose Operator"/>
-        {operatorsList}
+      <div className = {styles.background}>
+        <div className = {styles.chooseOperator}>
+          <Header name="Choose Operator"/>
+          {operatorsList}
+        </div>
       </div>
     );
   }
