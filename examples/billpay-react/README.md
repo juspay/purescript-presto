@@ -1,3 +1,7 @@
+# Bill Pay React Example
+
+Demo bill payments app using Presto framework and React.
+
 # Installation
 
 ```
