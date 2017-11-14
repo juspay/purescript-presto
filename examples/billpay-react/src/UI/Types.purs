@@ -12,7 +12,7 @@ data SplashScreen = SplashScreen
 data SplashScreenAction = SplashScreenRendered | SplashScreenAbort
 
 data ChooseOperatorScreen = ChooseOperatorScreen (Array Operator)
-data ChooseOperatorScreenAction = OperatorSelected | ChooseOperatorScreenAbort
+data ChooseOperatorScreenAction = OperatorSelected Operator | ChooseOperatorScreenAbort
 
 data AskMobileNumberScreen = AskMobileNumberScreen
 data AskMobileNumberScreenAction = SubmitMobileNumber MobileNumber | AskMobileNumberScreenAbort

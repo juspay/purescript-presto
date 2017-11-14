@@ -14,11 +14,11 @@ splashScreen = do
 		SplashScreenRendered -> pure SplashScreenRendered
 		SplashScreenAbort -> liftLeft UserAbort
 
-chooseOperator :: Array Operator -> Flow BillPayFailure ChooseOperatorScreenAction
+chooseOperator :: Array Operator -> Flow BillPayFailure Operator
 chooseOperator operators = do
 	action <- runUI' (ChooseOperatorScreen operators)
 	case action of 
-		OperatorSelected -> pure OperatorSelected
+		OperatorSelected operator-> pure operator
 		ChooseOperatorScreenAbort -> liftLeft UserAbort
 	
 
