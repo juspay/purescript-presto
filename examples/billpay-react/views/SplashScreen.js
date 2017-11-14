@@ -11,13 +11,15 @@ class SplashScreen extends Component {
   }
   render() {
     return (
-      <div className={styles.App}>
-        <header>
-          <h1 className={styles.AppTitle}>Bill Pay</h1>
-        </header>
-        <p className={styles.AppIntro}>
-          Make recharge simple
-        </p>
+      <div className={styles.background}>
+        <div className={styles.App}>
+          <header>
+            <h1 className={styles.AppTitle}>Bill Pay</h1>
+          </header>
+          <p className={styles.AppIntro}>
+            Make recharge simple
+          </p>
+        </div>
       </div>
     );
   }

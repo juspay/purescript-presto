@@ -36,33 +36,35 @@ class AskMobileNumber extends Component {
 
   render() {
     return (
-      <div className = {styles.AskMobileNumber}>
-        <div className={styles.headerWithArrow}>
-          <div className = {styles.operator}>
-            <img  onClick = {this.onBackClick} 
-              className = {styles.backImage} 
-              src={require("../dist/icon1.png")} 
-              alt = {require("../dist/logo.svg")} 
-              align = "left"/>
-          </div>
-          <Header name="Mobile Number"/>
-        </div>
-        <div className = {styles.body}>
-          <h4>Enter your Mobile Number</h4>
-          <div className={styles.rows}>
+      <div className = {styles.background}>
+        <div className = {styles.AskMobileNumber}>
+          <div className={styles.headerWithArrow}>
             <div className = {styles.operator}>
-              <img className = {styles.image} 
-                src={require("../dist/a910.png")} 
-                alt = {require("../dist/logo.svg")}/>
+              <img  onClick = {this.onBackClick} 
+                className = {styles.backImage} 
+                src={require("../dist/icon1.png")} 
+                alt = {require("../dist/logo.svg")} 
+                align = "left"/>
             </div>
-            <input type="tel" name = "mobileNumber" length = "10" />
+            <Header name="Mobile Number"/>
           </div>
+          <div className = {styles.body}>
+            <h4>Enter your Mobile Number</h4>
+            <div className={styles.rows}>
+              <div className = {styles.operator}>
+                <img className = {styles.image} 
+                  src={require("../dist/a910.png")} 
+                  alt = {require("../dist/logo.svg")}/>
+              </div>
+              <input type="tel" name = "mobileNumber" length = "10" />
+            </div>
+          </div>
+          <button onClick = {this.onMobileNumberEntered}
+            className = {styles.button} 
+            type="button">
+            Next
+          </button>
         </div>
-        <button onClick = {this.onMobileNumberEntered}
-          className = {styles.button} 
-          type="button">
-          Next
-        </button>
       </div>
     );
   }

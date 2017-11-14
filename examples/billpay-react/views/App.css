@@ -1,9 +1,14 @@
 :local .App {
-  text-align: center;
   color : #0B338D;
-  position: absolute;
-  top: 50%;
+  background: #FFFFFF;
+  width: 35%;
+  height: 100vh;
+  margin-left: 2em;
+  padding: 30em 0em 0em 0em;
+  top :50%;
   left: 50%;
+  position: absolute;
+  text-align: center;
   transform: translate(-50%, -50%)
 }
 
@@ -59,6 +64,10 @@
 
 :local .AskMobileNumber{
   color : #757575;
+  margin-left: 35%;
+  margin-right: 30%;
+  padding-bottom: 100vh;
+  background: #FFFFFF;
 }
 :local .body{
   margin-left: 2em;
@@ -71,7 +80,7 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  width:  20em;
+  width:  24em;
   margin: 2em;
   font-size: 16px;
   vertical-align: bottom;
@@ -81,19 +90,34 @@
 
 
 :local .chooseOperator {
-  margin : 2em;
+  position: absolute;
+  margin-left: 35%;
+  width:  30%;
+  padding: 2em;
+  background: #FFFFFF;
+  overflow: scroll;
+  height: 100vh;
+}
+
+:local .background{
+  background: #F7F7F7;
+  width: 100vw;
+  height: 110vh;
 }
 
 :local .status {
   position: absolute;
-  margin-top: 20%;
-  margin-left:5em;
+  padding: 20em 2em 2em 2em;
+  margin-left:35%;
+  background: #FFFFFF;
+  height: 100vh;
+  width: 30%
 }
 
 
 input[type=tel] {
   border: none;
-  width: 14em;
+  width: 80%;
   font-size: 1.2em;
   border-bottom: 2px solid #0B338D;
 }

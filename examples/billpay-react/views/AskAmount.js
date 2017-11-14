@@ -36,33 +36,35 @@ class AskAmount extends Component {
 
   render() {
     return (
-      <div className = {styles.AskMobileNumber}>
-        <div className={styles.headerWithArrow}>
-          <div className = {styles.operator}>
-            <img className = {styles.backImage} 
-              onClick = {this.onBackClick} 
-              src={require("../dist/icon1.png")} 
-              alt = {require("../dist/logo.svg")} 
-              align = "left"/>
-          </div>
-          <Header name="Enter Amount"/>
-        </div>
-        <div className = {styles.body}>
-          <h4>Enter your Mobile Number</h4>
-          <div className={styles.rows}>
+      <div className = {styles.background}>
+        <div className = {styles.AskMobileNumber}>
+          <div className={styles.headerWithArrow}>
             <div className = {styles.operator}>
-              <img className = {styles.image} 
-                src={require("../dist/rupeeblack0.png")} 
-                alt = {require("../dist/logo.svg")}/>
+              <img className = {styles.backImage} 
+                onClick = {this.onBackClick} 
+                src={require("../dist/icon1.png")} 
+                alt = {require("../dist/logo.svg")} 
+                align = "left"/>
             </div>
-            <input type="tel" name = "amount" maxLength = "10" />
+            <Header name="Enter Amount"/>
           </div>
+          <div className = {styles.body}>
+            <h4>Enter your Mobile Number</h4>
+            <div className={styles.rows}>
+              <div className = {styles.operator}>
+                <img className = {styles.image} 
+                  src={require("../dist/rupeeblack0.png")} 
+                  alt = {require("../dist/logo.svg")}/>
+              </div>
+              <input type="tel" name = "amount" maxLength = "10" />
+            </div>
+          </div>
+          <button className = {styles.button}
+            onClick = {this.onAmountEntered} 
+            type="button"> 
+            Next
+          </button>
         </div>
-        <button className = {styles.button}
-          onClick = {this.onAmountEntered} 
-          type="button"> 
-          Next
-        </button>
       </div>
     );
   }
