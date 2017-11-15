@@ -1,4 +1,4 @@
-# Bill Pay React Example
+# BillPay Presto-UI Example
 
 Demo bill payments app using Presto framework.
 
