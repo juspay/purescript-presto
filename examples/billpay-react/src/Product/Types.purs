@@ -9,9 +9,7 @@ type Amount = Number
 type Operator = String
 
 data BillPayStatus = SUCCESS | FAILURE
-data BillPayFailure = FetchOperatorFailure String 
-					           | BillPaymentFailure String 
-					           | UserAbort
+data BillPayFailure = FetchOperatorFailure String | BillPaymentFailure String | UserAbort
 
 derive instance genericBillPayStatus  :: Generic BillPayStatus _
 instance encodeBillPayStatus :: Encode BillPayStatus where
