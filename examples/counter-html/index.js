@@ -5192,6 +5192,7 @@ var PS = {};
   "use strict";
   var $foreign = PS["Main"];
   var Control_Applicative = PS["Control.Applicative"];
+  var Control_Apply = PS["Control.Apply"];
   var Control_Bind = PS["Control.Bind"];
   var Control_Monad_Aff = PS["Control.Monad.Aff"];
   var Control_Monad_Aff_AVar = PS["Control.Monad.Aff.AVar"];
@@ -5253,14 +5254,14 @@ var PS = {};
   var encodeCounterScreen = new Data_Foreign_Class.Encode(Data_Foreign_Generic.genericEncode(genericCounterScreen)(Data_Foreign_Generic_Class.genericEncodeConstructor(new Data_Symbol.IsSymbol(function () {
       return "CounterScreen";
   }))(Data_Foreign_Generic_Class.genericEncodeArgsArgument(Data_Foreign_Class.intEncode)))((function () {
-      var $12 = {};
-      for (var $13 in Data_Foreign_Generic.defaultOptions) {
-          if ({}.hasOwnProperty.call(Data_Foreign_Generic.defaultOptions, $13)) {
-              $12[$13] = Data_Foreign_Generic["defaultOptions"][$13];
+      var $11 = {};
+      for (var $12 in Data_Foreign_Generic.defaultOptions) {
+          if ({}.hasOwnProperty.call(Data_Foreign_Generic.defaultOptions, $12)) {
+              $11[$12] = Data_Foreign_Generic["defaultOptions"][$12];
           };
       };
-      $12.unwrapSingleConstructors = false;
-      return $12;
+      $11.unwrapSingleConstructors = false;
+      return $11;
   })()));
   var defaultPermissionStatus = function (permissions) {
       return Control_Monad_Aff.makeAff(function (err) {
@@ -5279,14 +5280,14 @@ var PS = {};
   var decodeCounterScreenAction = new Data_Foreign_Class.Decode(Data_Foreign_Generic.genericDecode(genericCounterScreenAction)(Data_Foreign_Generic_Class.genericDecodeConstructor(new Data_Symbol.IsSymbol(function () {
       return "Increment";
   }))(Data_Foreign_Generic_Class.genericDecodeArgsNoArguments)(Data_Foreign_Generic_Class.genericCountArgsNoArguments))((function () {
-      var $15 = {};
-      for (var $16 in Data_Foreign_Generic.defaultOptions) {
-          if ({}.hasOwnProperty.call(Data_Foreign_Generic.defaultOptions, $16)) {
-              $15[$16] = Data_Foreign_Generic["defaultOptions"][$16];
+      var $14 = {};
+      for (var $15 in Data_Foreign_Generic.defaultOptions) {
+          if ({}.hasOwnProperty.call(Data_Foreign_Generic.defaultOptions, $15)) {
+              $14[$15] = Data_Foreign_Generic["defaultOptions"][$15];
           };
       };
-      $15.unwrapSingleConstructors = true;
-      return $15;
+      $14.unwrapSingleConstructors = true;
+      return $14;
   })()));
   var counterScreenInteract = new Presto_Core_Types_Language_Interaction.Interact(function () {
       return decodeCounterScreenAction;
@@ -5295,14 +5296,12 @@ var PS = {};
   }, function (x) {
       return Presto_Core_Types_Language_Interaction.defaultInteract(encodeCounterScreen)(decodeCounterScreenAction)(x);
   });
-  var testScreen = function (count) {
-      return Control_Bind.bind(Control_Monad_Free.freeBind)(Presto_Core_Types_Language_Flow.runUI(counterScreenInteract)(new CounterScreen(count)))(function (v) {
-          return testScreen(count + 1 | 0);
+  var count = function (val) {
+      return Control_Bind.bind(Control_Monad_Free.freeBind)(Presto_Core_Types_Language_Flow.runUI(counterScreenInteract)(new CounterScreen(val)))(function (v) {
+          return count(val + 1 | 0);
       });
   };
-  var appFlow = Control_Bind.bind(Control_Monad_Free.freeBind)(testScreen(0))(function (v) {
-      return Control_Applicative.pure(Control_Monad_Free.freeApplicative)(Data_Unit.unit);
-  });
+  var appFlow = Control_Apply.applySecond(Control_Monad_Free.freeApply)(count(0))(Control_Applicative.pure(Control_Monad_Free.freeApplicative)(Data_Unit.unit));
   var launchApp = (function () {
       var uiRunner = function (a) {
           return Control_Monad_Aff.makeAff(function (err) {
@@ -5327,11 +5326,11 @@ var PS = {};
   exports["CounterScreen"] = CounterScreen;
   exports["Increment"] = Increment;
   exports["appFlow"] = appFlow;
+  exports["count"] = count;
   exports["defaultPermissionRequest"] = defaultPermissionRequest;
   exports["defaultPermissionStatus"] = defaultPermissionStatus;
   exports["launchApp"] = launchApp;
   exports["main"] = main;
-  exports["testScreen"] = testScreen;
   exports["counterScreenInteract"] = counterScreenInteract;
   exports["genericCounterScreen"] = genericCounterScreen;
   exports["encodeCounterScreen"] = encodeCounterScreen;

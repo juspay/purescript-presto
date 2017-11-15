@@ -30,15 +30,14 @@ import Types (AppEffects, CancelerEffects, EffStorage, AffStorage)
 foreign import showUI' :: forall e. Fn2 (String -> Eff (ui :: UI | e) Unit) String (Eff (ui :: UI | e) Unit)
 
 -- Presents UI to user, waits to action and recurse.
-testScreen :: Int -> Flow Unit
-testScreen count = do
-  Increment <- runUI $ CounterScreen count
-  testScreen $ count + 1
+count :: Int -> Flow Unit
+count val = do
+  Increment <- runUI $ CounterScreen val
+  count $ val + 1
 
 appFlow :: Flow Unit
 appFlow = do
-  count <- testScreen 0
-  pure unit
+  count 0 *> pure unit
 
 launchApp :: Eff (AppEffects) (Canceler (CancelerEffects))
 launchApp = do
