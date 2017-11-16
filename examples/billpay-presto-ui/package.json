@@ -9,11 +9,11 @@
     "start-psc": "pulp --watch build"
   },
   "dependencies": {
-    "@juspay/mystique": "git+https://git@github.com/juspay/mystique.git#unification",
     "any-base": "^1.0.1",
     "axios": "^0.16.2",
     "es6-promise": "^4.1.0",
     "immu": "^3.0.0",
+    "presto-ui": "^0.2.0",
     "qr-image": "^3.2.0",
     "ramda": "^0.23.0"
   },

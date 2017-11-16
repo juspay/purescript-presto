@@ -1,8 +1,8 @@
-const View = require("@juspay/mystique").baseView;
-const dom = require("@juspay/mystique").doms;
+const View = require("presto-ui").baseView;
+const dom = require("presto-ui").doms;
 
-const LinearLayout = require("@juspay/mystique").views.LinearLayout;
-const TextView = require("@juspay/mystique").views.TextView;
+const LinearLayout = require("presto-ui").views.LinearLayout;
+const TextView = require("presto-ui").views.TextView;
 
 const Config = require('./../globalConfig');
 const Controller = require('./../controller/components/Button');

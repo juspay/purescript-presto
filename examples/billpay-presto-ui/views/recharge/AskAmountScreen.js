@@ -1,10 +1,10 @@
-const View = require("@juspay/mystique").baseView;
-const dom = require("@juspay/mystique").doms;
+const View = require("presto-ui").baseView;
+const dom = require("presto-ui").doms;
 
-const LinearLayout = require("@juspay/mystique").views.LinearLayout;
-const ImageView = require("@juspay/mystique").views.ImageView;
-const TextView = require("@juspay/mystique").views.TextView;
-const EditText = require("@juspay/mystique").views.EditText;
+const LinearLayout = require("presto-ui").views.LinearLayout;
+const ImageView = require("presto-ui").views.ImageView;
+const TextView = require("presto-ui").views.TextView;
+const EditText = require("presto-ui").views.EditText;
 
 const Config = require('./../../globalConfig');
 const Controller = require('./../../controller/pages/Recharge/AskAmountScreen');

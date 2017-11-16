@@ -1,6 +1,6 @@
-var dom = require("@juspay/mystique").doms;
-var View = require("@juspay/mystique").baseView;
-var RelativeLayout = require("@juspay/mystique").views.RelativeLayout;
+var dom = require("presto-ui").doms;
+var View = require("presto-ui").baseView;
+var RelativeLayout = require("presto-ui").views.RelativeLayout;
 
 class RootScreen extends View {
   constructor(props, children) {

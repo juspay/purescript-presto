@@ -1,4 +1,4 @@
-const View = require("@juspay/mystique").baseView;
+const View = require("presto-ui").baseView;
 
 class SplashScreen extends View {
 

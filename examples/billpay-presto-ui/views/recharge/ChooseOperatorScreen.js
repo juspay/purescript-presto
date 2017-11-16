@@ -1,9 +1,9 @@
-const View = require("@juspay/mystique").baseView;
-const dom = require("@juspay/mystique").doms;
+const View = require("presto-ui").baseView;
+const dom = require("presto-ui").doms;
 
-const LinearLayout = require("@juspay/mystique").views.LinearLayout;
-const TextView = require("@juspay/mystique").views.TextView;
-const ScrollView = require("@juspay/mystique").views.ScrollView;
+const LinearLayout = require("presto-ui").views.LinearLayout;
+const TextView = require("presto-ui").views.TextView;
+const ScrollView = require("presto-ui").views.ScrollView;
 const Operator = require('../../components/Operator');
 
 const Config = require('./../../globalConfig');

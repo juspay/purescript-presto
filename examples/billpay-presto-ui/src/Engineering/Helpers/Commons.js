@@ -1,4 +1,4 @@
-var callbackMapper = require('@juspay/mystique/src/helpers/android/callbackMapper');
+var callbackMapper = require('presto-ui/src/helpers/android/callbackMapper');
 
 exports["showUI'"] = function(sc,screen) {
 	return function() {
