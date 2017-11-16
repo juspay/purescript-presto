@@ -5,7 +5,6 @@ Counter app using Presto framework and HTML.
 # Installation
 
 ```
-npm i
 bower i
 ```
 

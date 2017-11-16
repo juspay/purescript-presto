@@ -5,7 +5,7 @@
   "scripts": {
     "compile": "webpack --progress --colors --optimize-minimize",
     "compile-psc": "pulp build",
-    "start": "webpack-dev-server --watch",
+    "start": "npm run start-psc & webpack-dev-server --watch",
     "start-psc": "pulp --watch build"
   },
   "dependencies": {
