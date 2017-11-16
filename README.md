@@ -10,3 +10,7 @@ If you need a symbol that is not available via these modules, submit a PR to hav
  * `Presto.Core.Types.App`
  * `Presto.Core.Types.API`
  * `Presto.Core.Types.Permission`
+
+# API Docs
+
+API documentation is [published on Pursuit](http://pursuit.purescript.org/packages/purescript-presto).
