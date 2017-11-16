@@ -6,6 +6,7 @@
 
 html {
   font-family: 'Source Sans Pro', sans-serif;
+  background: #F7F7F7;
 }
 
 .parent {
@@ -47,7 +48,7 @@ html {
   position: relative;
   height: 640px;
   width: 360px;
-  margin-left: 25px;
+  margin-left: 0px;
   margin-top: 93px;
 }
 
@@ -58,14 +59,15 @@ html {
 
 .image {
   height: 840px;
-  background-image: url(https://sproutup.info/img/screenshots/nexus5.png);
   background-size: contain;
   width: 410px;
-  margin-top: -50px;
   border-top: none;
   border-bottom: none;
   overflow-y: hidden;
   clear:both;
+  display: block;
+  margin: auto;
+  margin-top: -80px;
 }
 
 input {

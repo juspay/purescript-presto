@@ -28,7 +28,13 @@
 		parent.appendChild(image);
 		image.appendChild(content);
 	} else {
-		document.body.appendChild(content);
+		let parent = document.createElement('div');
+		parent.className = 'parent';
+		let image = document.createElement('div');
+		image.className = 'image';
+		document.body.appendChild(parent);
+		parent.appendChild(image);
+		image.appendChild(content);
 	}
 
 	function addPages() {
