@@ -32,6 +32,10 @@
   "authors": [
     "Juspay Technologies"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/juspay/purescript-presto.git"
+  },
   "version": "0.1",
   "license": "MIT"
 }
