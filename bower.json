@@ -36,6 +36,6 @@
     "type": "git",
     "url": "git://github.com/juspay/purescript-presto.git"
   },
-  "version": "v0.2.1",
+  "version": "v0.2.2",
   "license": "AGPL-1.0"
 }
