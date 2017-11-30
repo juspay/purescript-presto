@@ -117,7 +117,6 @@ interpret _ (Await (Control resultVar) nextF) = do
 interpret _ (Delay duration next) = lift (delay duration) *> pure next
 
 interpret rt (OneOf flows nextF) = do
-  lift $ warn "oneOf does not work yet"
   st <- S.get
   Tuple a s <- lift $ parOneOf (parFlow st <$> flows)
   S.put s
