@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Alt ((<|>))
 import Control.Monad.Aff as Aff
-import Control.Monad.Aff.AVar (peekVar)
+import Control.Monad.Aff.AVar (readVar)
 import Control.Monad.State.Trans (runStateT, evalStateT)
 import Data.Map (member, empty, insert, singleton)
 import Data.Maybe (Maybe(..))
@@ -92,7 +92,7 @@ onFirstRunFlowTest :: forall eff. TestCase eff
 onFirstRunFlowTest = do
   stVar <- mkStVar mkEmptySt
   Tuple r1 st1 <- runStateT (run onFirstRunFlow1) stVar
-  store1 <- peekVar st1 >>= (pure <<< _.store)
+  store1 <- readVar st1 >>= (pure <<< _.store)
   let expected1 = "42" `member` store1
   expected1 `shouldEqual` true
   r1 `shouldEqual` (MyInt 42)
@@ -166,7 +166,7 @@ oneOfTest = do
   -- At least one should be resolved to our satisfaction
   [Just "AAAAA", Just "BBBBBBBBBB"] `shouldContain` (mbA <|> mbB)
   -- And the state should not be lost
-  stNew <- peekVar stVar'
+  stNew <- readVar stVar'
   stNew.store `shouldContain` "xxx"
   where
     oneOfUpdateFlow = do
