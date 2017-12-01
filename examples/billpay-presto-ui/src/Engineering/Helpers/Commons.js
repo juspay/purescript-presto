@@ -1,5 +1,3 @@
-var callbackMapper = require('presto-ui/src/helpers/android/callbackMapper');
-
 exports["showUI'"] = function(sc,screen) {
 	return function() {
 		var screenJSON = JSON.parse(screen);
