@@ -15,7 +15,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules\/(?!presto-ui)/,
+        exclude: /node_modules\//,
         loader: "babel-loader"
       },
     ]

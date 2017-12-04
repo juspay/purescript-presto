@@ -4,6 +4,11 @@ Write apps like equations!
 
 Code as simple and precise as Mathematical Expressions. Presto is written in PureScript harnessing the powers of Functional Programming & Category Theory. What you get is scalable, performant code with elegant abstractions. Our attempt with Presto is to really simplify the app development process.
 
+[Talk on Presto @FunctionalConf](https://www.youtube.com/watch?v=HLEwYghBjo8)
+<br/>
+[Slides](https://speakerdeck.com/vimalkumar/presto-at-functional-conf-2017)
+
+
 
 ## Quickstart
 
@@ -56,9 +61,9 @@ bower i purescript-presto
 
 ## Apps in Production
 
-[***BHIM***](https://bhimupi.org.in/) - Payments App, 17 Million Total Users
+[***BHIM***](https://play.google.com/store/apps/details?id=in.org.npci.upiapp&hl=en) - Payments App, 17 Million Total Users
 <br>[***JuspaySafe***](https://juspay.in/juspay-safe) - Payments Browser, 800 Million Txns Processed
-<br>[***JuspayFuel***](https://juspay.in/juspay-fuel) - Payments Solution for Gas Stations, 1000s of Outlets
+<br>[***JuspayFuel***](https://play.google.com/store/apps/details?id=in.juspay.euler.pregel&hl=en) - Payments Solution for Gas Stations, 1000s of Outlets
 
 
 ## Community
