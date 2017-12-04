@@ -19,6 +19,22 @@ npm start
 
 Open http://localhost:8080/dist/ in your browser.
 
+## Code Snippet
+
+```
+billPayFlow :: Flow BillPayFailure StatusScreenAction
+billPayFlow = do
+  _            <- UI.splashScreen
+  operators    <- Remote.fetchOperators
+  operator     <- UI.chooseOperator operators
+  mobileNumber <- UI.askMobileNumber
+  amount       <- UI.askAmount
+  result       <- Remote.payBill mobileNumber amount operator
+  UI.billPayStatus mobileNumber amount result
+```
+
+See [examples](https://github.com/juspay/purescript-presto/tree/master/examples/) directory for more samples.
+
 ## Examples
 
 You can try out the below examples.
