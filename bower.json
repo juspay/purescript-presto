@@ -15,7 +15,7 @@
     "purescript-free": "^4.1.0",
     "purescript-exists": "^3.0.0",
     "purescript-control": "^3.3.0",
-    "purescript-foreign-generic": "4.1.0",
+    "purescript-foreign-generic": "5.0.0",
     "purescript-generics-rep": "^5.2.0",
     "purescript-spec": "^1.0.0",
     "purescript-transformers": "^3.4.0",
