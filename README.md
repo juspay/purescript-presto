@@ -70,7 +70,7 @@ bower i purescript-presto
 
 Get updates on improvements to Presto and chat with the project maintainers and community members.
 
-Join a discussion or start one at http://forum.juspayuniversity.in
+Join a discussion or start one at our [forum](http://forum.juspayuniversity.in) or [gitter channel](https://gitter.im/Purescript-Presto/Lobby#).
 
 ## Contributing
 
