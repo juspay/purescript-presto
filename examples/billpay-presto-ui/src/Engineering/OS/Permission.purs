@@ -2,7 +2,7 @@ module Engineering.OS.Permission where
 
 import Prelude
 
-import Control.Monad.Aff (makeAff, Aff)
+import Control.Monad.Aff (Aff, makeAff, nonCanceler)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Exception (Error, error)
 import Control.Monad.Except (runExcept, throwError)
@@ -55,7 +55,9 @@ storagePermissionGranted = do
 
 getPermissionStatus :: forall e. Permission -> AffStorage e Boolean
 getPermissionStatus permission = do
-  permissionStr <- makeAff (\err sc -> runFn3 getPermissionStatus' err sc (toAndroidPermission permission))
+  permissionStr <- makeAff (\callback -> do
+    runFn3 getPermissionStatus' (Left >>> callback) (Right >>> callback) (toAndroidPermission permission)
+    pure nonCanceler)
   case (runExcept (decodeJSON permissionStr)) of
     Right x -> pure x
     Left err -> throwError (error (show err))
@@ -69,7 +71,9 @@ checkIfPermissionsGranted permissions = do
 
 requestPermissions :: forall e. Array Permission -> AffStorage e (Array PermissionResponse)
 requestPermissions permissions = do
-  response <- makeAff (\err sc -> runFn3 requestPermission' err sc $ show jPermission)
+  response <- makeAff (\callback -> do
+    runFn3 requestPermission' (Left >>> callback) (Right >>> callback) $ show jPermission
+    pure nonCanceler)
   case runExcept $ decodeJSON response of
     Right (statuses :: Array Boolean) -> pure $ zip permissions (map toResponse statuses)
     Left err -> throwError (error (show err))

@@ -15,10 +15,10 @@
   "dependencies": {
     "purescript-prelude": "^3.0.0",
     "purescript-console": "^3.0.0",
-    "purescript-aff": "^3.0.0",
+    "purescript-aff": "^4.0.1",
     "purescript-transformers": "^3.2.0",
     "purescript-arrays": "^4.0.1",
-    "purescript-foreign-generic": "4.3.0",
+    "purescript-foreign-generic": "^5.0.0",
     "purescript-free": "^4.1.0",
     "purescript-presto": "https://github.com/juspay/purescript-presto.git",
     "purescript-monad-loops": "^0.4.0",
