@@ -4,6 +4,11 @@ Write apps like equations!
 
 Code as simple and precise as Mathematical Expressions. Presto is written in PureScript harnessing the powers of Functional Programming & Category Theory. What you get is scalable, performant code with elegant abstractions. Our attempt with Presto is to really simplify the app development process.
 
+[Talk on Presto @FunctionalConf](https://www.youtube.com/watch?v=HLEwYghBjo8)
+<br/>
+[Slides](https://speakerdeck.com/vimalkumar/presto-at-functional-conf-2017)
+
+
 
 ## Quickstart
 
@@ -18,6 +23,22 @@ npm start
 ```
 
 Open http://localhost:8080/dist/ in your browser.
+
+## Code Snippet
+
+```
+billPayFlow :: Flow BillPayFailure StatusScreenAction
+billPayFlow = do
+  _            <- UI.splashScreen
+  operators    <- Remote.fetchOperators
+  operator     <- UI.chooseOperator operators
+  mobileNumber <- UI.askMobileNumber
+  amount       <- UI.askAmount
+  result       <- Remote.payBill mobileNumber amount operator
+  UI.billPayStatus mobileNumber amount result
+```
+
+See [examples](https://github.com/juspay/purescript-presto/tree/master/examples/) directory for more samples.
 
 ## Examples
 
@@ -40,16 +61,16 @@ bower i purescript-presto
 
 ## Apps in Production
 
-[***BHIM***](https://bhimupi.org.in/) - Payments App, 17 Million Total Users
+[***BHIM***](https://play.google.com/store/apps/details?id=in.org.npci.upiapp&hl=en) - Payments App, 17 Million Total Users
 <br>[***JuspaySafe***](https://juspay.in/juspay-safe) - Payments Browser, 800 Million Txns Processed
-<br>[***JuspayFuel***](https://juspay.in/juspay-fuel) - Payments Solution for Gas Stations, 1000s of Outlets
+<br>[***JuspayFuel***](https://play.google.com/store/apps/details?id=in.juspay.euler.pregel&hl=en) - Payments Solution for Gas Stations, 1000s of Outlets
 
 
 ## Community
 
 Get updates on improvements to Presto and chat with the project maintainers and community members.
 
-Join a discussion or start one at http://forum.juspayuniversity.in
+Join a discussion or start one at our [forum](http://forum.juspayuniversity.in) or [gitter channel](https://gitter.im/Purescript-Presto/Lobby#).
 
 ## Contributing
 
