@@ -4,6 +4,9 @@ module Presto.Core.Language.Runtime.Interpreter
   , PermissionCheckRunner
   , PermissionTakeRunner
   , PermissionRunner(..)
+  , StorageRunner(..)
+  , StorageSaveRunner
+  , StorageLoadRunner
   , run
   ) where
 
@@ -21,12 +24,12 @@ import Control.Parallel (parOneOf)
 import Data.Either (Either(..))
 import Data.Exists (runExists)
 import Data.Foreign.JSON (parseJSON)
+import Data.Maybe (Maybe)
 import Data.NaturalTransformation (NaturalTransformation)
 import Data.StrMap (StrMap, insert, lookup)
 import Data.Tuple (Tuple(..))
 import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
-import Presto.Core.LocalStorage (getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.App (AppFlow, STORAGE, UI)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
@@ -45,7 +48,11 @@ type PermissionCheckRunner = forall e. Array Permission -> Aff (storage :: STORA
 type PermissionTakeRunner = forall e. Array Permission -> Aff (storage :: STORAGE | e) (Array PermissionResponse)
 data PermissionRunner = PermissionRunner PermissionCheckRunner PermissionTakeRunner
 
-data Runtime = Runtime UIRunner PermissionRunner APIRunner
+type StorageSaveRunner = forall e. Key -> String -> Aff (storage :: STORAGE | e) Unit
+type StorageLoadRunner = forall e. Key -> Aff (storage :: STORAGE | e) (Maybe String)
+data StorageRunner = StorageRunner StorageSaveRunner StorageLoadRunner
+
+data Runtime = Runtime UIRunner PermissionRunner APIRunner StorageRunner
 
 -- FIXME: can the effects on the interepreter of each type be more fine-grained?
 
@@ -83,25 +90,26 @@ runErrorHandler (ThrowError msg) = throwError $ error msg
 runErrorHandler (ReturnResult res) = pure res
 
 interpret :: forall eff s. Runtime -> NaturalTransformation (FlowMethod s) (InterpreterSt eff)
-interpret (Runtime _ _ apiRunner) (CallAPI apiInteractionF nextF) = do
+interpret (Runtime _ _ apiRunner _) (CallAPI apiInteractionF nextF) = do
   lift $ runAPIInteraction apiRunner apiInteractionF
     >>= (pure <<< nextF)
 
-interpret (Runtime uiRunner _ _) (RunUI uiInteraction nextF) = do
+interpret (Runtime uiRunner _ _ _) (RunUI uiInteraction nextF) = do
   lift $ runUIInteraction uiRunner uiInteraction
     >>= (pure <<< nextF)
 
-interpret (Runtime uiRunner _ _) (ForkUI uiInteraction next) = do
+interpret (Runtime uiRunner _ _ _) (ForkUI uiInteraction next) = do
   void $ lift $ forkAff $ runUIInteraction uiRunner uiInteraction
   pure next
 
-interpret _ (Get LocalStore key next) = lift $ getValueFromLocalStore key >>= (pure <<< next)
+interpret (Runtime _ _ _ (StorageRunner _ load)) (Get LocalStore key next) =
+  lift $ load key >>= (pure <<< next)
 
 interpret _ (Get InMemoryStore key next) = do
   readState >>= (lookup key >>> next >>> pure)
 
-interpret _ (Set LocalStore key value next) = do
-  lift $ setValueToLocalStore key value
+interpret (Runtime _ _ _ (StorageRunner save _)) (Set LocalStore key value next) = do
+  lift $ save key value
   pure next
 
 interpret _ (Set InMemoryStore key value next) = do
@@ -127,10 +135,10 @@ interpret rt (OneOf flows nextF) = do
 interpret rt (HandleError flow nextF) =
   run rt flow >>= runErrorHandler >>= (pure <<< nextF)
 
-interpret (Runtime _ (PermissionRunner check _) _) (CheckPermissions permissions nextF) = do
+interpret (Runtime _ (PermissionRunner check _) _ _) (CheckPermissions permissions nextF) = do
   lift $ check permissions >>= (pure <<< nextF)
 
-interpret (Runtime _ (PermissionRunner _ take) _) (TakePermissions permissions nextF) = do
+interpret (Runtime _ (PermissionRunner _ take) _ _) (TakePermissions permissions nextF) = do
   lift $ take permissions >>= (pure <<< nextF)
 
 run :: forall eff. Runtime -> NaturalTransformation Flow (InterpreterSt eff)
