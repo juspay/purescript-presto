@@ -30,7 +30,7 @@ import Data.StrMap (StrMap, insert, lookup)
 import Data.Tuple (Tuple(..))
 import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
-import Presto.Core.Types.App (AppFlow, STORAGE, UI)
+import Presto.Core.Types.App (AppFlow, LOCAL_STORAGE, STORAGE, UI)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Language.Storage (Key)
@@ -48,8 +48,8 @@ type PermissionCheckRunner = forall e. Array Permission -> Aff (storage :: STORA
 type PermissionTakeRunner = forall e. Array Permission -> Aff (storage :: STORAGE | e) (Array PermissionResponse)
 data PermissionRunner = PermissionRunner PermissionCheckRunner PermissionTakeRunner
 
-type StorageSaveRunner = forall e. Key -> String -> Aff (storage :: STORAGE | e) Unit
-type StorageLoadRunner = forall e. Key -> Aff (storage :: STORAGE | e) (Maybe String)
+type StorageSaveRunner = forall e. Key -> String -> Aff (ls :: LOCAL_STORAGE | e) Unit
+type StorageLoadRunner = forall e. Key -> Aff (ls :: LOCAL_STORAGE | e) (Maybe String)
 data StorageRunner = StorageRunner StorageSaveRunner StorageLoadRunner
 
 data Runtime = Runtime UIRunner PermissionRunner APIRunner StorageRunner
