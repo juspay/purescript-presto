@@ -12,6 +12,7 @@ import Data.Either (either)
 import Data.Foreign.Class (class Decode)
 import Data.Foreign.Generic (decodeJSON, encodeJSON)
 import Data.Maybe (Maybe(..))
+import Data.Traversable (traverse)
 
 type Key = String
 
@@ -33,3 +34,15 @@ instance booleanSerializable :: Serializable Boolean where
 instance intSerializable :: Serializable Int where
   serialize = encodeJSON
   deserialize = primDeserialize
+
+instance numberSerializable :: Serializable Number where
+  serialize = encodeJSON
+  deserialize = primDeserialize
+
+instance charSerializable :: Serializable Char where
+  serialize = encodeJSON
+  deserialize = primDeserialize
+
+instance arraySerializable :: Serializable a => Serializable (Array a) where
+  serialize = map serialize >>> encodeJSON
+  deserialize a = primDeserialize a >>= traverse deserialize
