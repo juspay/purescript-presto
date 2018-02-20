@@ -1,19 +1,36 @@
 :local .App {
-  color : #0B338D;
-  background: #FFFFFF;
-  width: 35%;
-  height: 100vh;
-  margin-left: 2em;
-  padding: 30em 0em 0em 0em;
-  top :50%;
-  left: 50%;
   position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
   text-align: center;
-  transform: translate(-50%, -50%)
+}
+
+:local .AppWrap{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 :local .header {
   color : #0B338D;
+  font-weight: 400;
+  padding: 5px 3px;
+  font-weight: bold;
+  position: relative;
+  margin-bottom: 25px;
+}
+
+
+:local .header:before {
+  width: 50px;
+  content: '';
+  height: 3px;
+  position: absolute;
+  bottom: -10px;
+  left: 5px;
+  border-radius: 3px;
+  background-color: #d9d9d9
 }
 
 :local .AppTitle {
@@ -25,52 +42,73 @@
 }
 
 :local .rows {
-  display: block;
+
 }
 
 :local .operatorList {
-  display: block;
-  margin-bottom: 2em;
+  width: calc(50% - 10px);
+  padding: 15px 5px;
+  box-shadow: 0 5px 7px 0 rgba(19, 91, 168, .1);
+  margin: 10px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid rgba(99,99,99,.1);
 }
 
 :local .headerWithArrow{
-  display: block;
-  margin-left: 1em
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
+
+
+:local .headerWithArrow h3{
+  display: inline-block!important;
+  width: auto!important;
+  padding: 15px 0;
+}
+
+
+:local .headerWithArrow h3:before{
+  display: inline-block!important;
+  width: auto!important;
+  display: none;
+}
+
+
 :local .operator {
-  display: inline-block;
-  vertical-align: middle;
   color : #0B338D;
-  font-size: large;
+  width: 50px;
+  margin: 0 auto;
 }
 
 :local .operatorName {
-  display: inline-block;
-  vertical-align: middle;
   color : #0B338D;
-  margin-left: 2em;
-  font-size: large;
+  font-size: small;
+  padding: 10px 0;
+  font-weight: bold;
 }
 
 :local .image {
+  width: 100%;
   height: 2.2em;
-  width: 2.2em;
 }
 
 :local .backImage{
   height: 3.5em;
-  width: 3.5em;
 }
 
 :local .AskMobileNumber{
   color : #757575;
-  margin-left: 35%;
-  margin-right: 30%;
   padding-bottom: 100vh;
   background: #FFFFFF;
 }
 :local .body{
-  margin-left: 2em;
+
+  padding: 10px;
+
+
 }
 :local .button {
   background-color: #0B338D; 
@@ -80,8 +118,7 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  width:  30%;
-  margin: 2em;
+  width:  100%;
   font-size: 16px;
   vertical-align: bottom;
   position:absolute;
@@ -90,34 +127,36 @@
 
 
 :local .chooseOperator {
-  position: absolute;
-  margin-left: 35%;
-  width:  30%;
-  padding: 2em;
-  background: #FFFFFF;
-  overflow: scroll;
-  height: 100vh;
+  padding: 1em;
 }
 
 :local .background{
-  background: #F7F7F7;
-  width: 100vw;
-  height: 110vh;
+  color : #0B338D;
+  background: #FFFFFF;
+  height: 100vh;
+  width: 100%;
+  position: relative;
 }
 
 :local .status {
   position: absolute;
   padding: 20em 2em 2em 2em;
-  margin-left:35%;
-  background: #FFFFFF;
   height: 100vh;
-  width: 30%
+  width: 100%
 }
 
+:local .status h1{
+  margin-top: 10px;
+}
+
+:local .status p{
+  line-height: 1/px;
+}
 
 input[type=tel] {
   border: none;
-  width: 80%;
+  width: 100%;
+  padding: 20px 10px;
   font-size: 1.2em;
   border-bottom: 2px solid #0B338D;
 }

@@ -4,7 +4,7 @@ import styles from './App.css';
 class Header extends Component {
   render() {
     return (
-      <h1 className={styles.header}>{this.props.name}</h1>
+      <h3 className={styles.header}>{this.props.name}</h3>
     );
   }
 }
@@ -13,14 +13,14 @@ class Header extends Component {
 class Operator extends Component {
   render() {
     return (
-      <div className = {styles.operatorList} onClick = {()=>{this.props.callBack(this.props.operatorName)}}>
-        <div className = {styles.operator}>
-          <img className = {styles.image} 
-            src={require("../dist/"+(this.props.operatorName).toLowerCase()+".png")} 
-            alt = {require("../dist/logo.svg")}/>
+        <div className = {styles.operatorList} onClick = {()=>{this.props.callBack(this.props.operatorName)}}>
+          <div className = {styles.operator}>
+            <img className = {styles.image} 
+              src={require("../dist/"+(this.props.operatorName).toLowerCase()+".png")} 
+              alt = {require("../dist/logo.svg")}/>
+          </div>
+          <div className={styles.operatorName}>{this.props.operatorName}</div>
         </div>
-        <div className={styles.operatorName}>{this.props.operatorName}</div>
-      </div>
     );
   }
 }
@@ -46,7 +46,9 @@ class ChooseOperator extends Component {
       <div className = {styles.background}>
         <div className = {styles.chooseOperator}>
           <Header name="Choose Operator"/>
-          {operatorsList}
+          <div className= { styles.AppWrap }>
+            {operatorsList}
+          </div>
         </div>
       </div>
     );

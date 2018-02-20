@@ -15,14 +15,6 @@ operators = [
   , "BSNL"
   , "Idea"
   , "MTNL"
-  , "Airtel"
-  , "Vodafone"
-  , "JIO"
-  , "Aircel"
-  , "Docomo"
-  , "BSNL"
-  , "Idea"
-  , "MTNL"
 ]
 
 fetchOperators :: Flow BillPayFailure (Array Operator)

@@ -4,9 +4,7 @@ import styles from './App.css';
 class Header extends Component {
   render() {
     return (
-      <div className={styles.operator}>
-        <h1 className={styles.header}>{this.props.name}</h1>
-      </div>
+      <h3 className={styles.header}>{this.props.name}</h3>
     );
   }
 }
@@ -39,24 +37,17 @@ class AskAmount extends Component {
       <div className = {styles.background}>
         <div className = {styles.AskMobileNumber}>
           <div className={styles.headerWithArrow}>
-            <div className = {styles.operator}>
               <img className = {styles.backImage} 
                 onClick = {this.onBackClick} 
                 src={require("../dist/icon1.png")} 
                 alt = {require("../dist/logo.svg")} 
                 align = "left"/>
-            </div>
             <Header name="Enter Amount"/>
           </div>
           <div className = {styles.body}>
-            <h4>Enter your Mobile Number</h4>
+            <h4>Enter amount to be recharged</h4>
             <div className={styles.rows}>
-              <div className = {styles.operator}>
-                <img className = {styles.image} 
-                  src={require("../dist/rupeeblack0.png")} 
-                  alt = {require("../dist/logo.svg")}/>
-              </div>
-              <input type="tel" name = "amount" maxLength = "10" />
+              <input type="tel" name = "amount" maxLength = "10" placeholder="Rs. 100 /-" />
             </div>
           </div>
           <button className = {styles.button}
