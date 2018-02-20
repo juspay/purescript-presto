@@ -102,7 +102,6 @@
 :local .AskMobileNumber{
   color : #757575;
   padding-bottom: 100vh;
-  background: #FFFFFF;
 }
 :local .body{
 
@@ -133,8 +132,10 @@
 :local .background{
   color : #0B338D;
   background: #FFFFFF;
-  height: 100vh;
+  height: 80vh;
+  max-width: 425px;
   width: 100%;
+  margin: 10vh auto;
   position: relative;
 }
 
