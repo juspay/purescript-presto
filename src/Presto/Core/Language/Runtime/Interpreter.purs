@@ -18,6 +18,7 @@ import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Exception (Error, error)
 import Control.Monad.Except (throwError, runExcept)
 import Control.Monad.Free (foldFree)
+import Control.Monad.State.Trans (evalStateT)
 import Control.Monad.State.Trans as S
 import Control.Monad.Trans.Class (lift)
 import Control.Parallel (parOneOf)
@@ -30,7 +31,7 @@ import Data.StrMap (StrMap, insert, lookup)
 import Data.Tuple (Tuple(..))
 import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
-import Presto.Core.Types.App (AppFlow, LOCAL_STORAGE, STORAGE, UI)
+import Presto.Core.Types.App (AppFlow, LOCAL_STORAGE, STORAGE, UI, AppEffects)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Language.Storage (Key)
@@ -143,3 +144,6 @@ interpret (Runtime _ (PermissionRunner _ take) _ _) (TakePermissions permissions
 
 run :: forall eff. Runtime -> NaturalTransformation Flow (InterpreterSt eff)
 run runtime = foldFree (\(FlowWrapper x) -> runExists (interpret runtime) x)
+
+defaultRun :: forall a e. Runtime -> Flow a -> Aff (AppEffects e) a
+defaultRun runtime flow = makeEmptyVar >>= evalStateT (run runtime flow)
