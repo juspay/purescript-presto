@@ -13,6 +13,7 @@ import Data.Generic.Rep.Show (genericShow)
 
 data PermissionStatus = PermissionGranted
                       | PermissionDeclined
+                      | PermissionDeclinedForever
 
 derive instance eqPermissionStatus  :: Eq PermissionStatus
 
