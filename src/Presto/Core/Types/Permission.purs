@@ -20,6 +20,10 @@ data Permission = PermissionReadPhoneState
                 | PermissionSendSms
                 | PermissionReadStorage
                 | PermissionWriteStorage
+                | PermissionCamera
+                | PermissionLocation
+                | PermissionCoarseLocation
+                | PermissionContacts
 
 type PermissionResponse = Tuple Permission PermissionStatus
 
