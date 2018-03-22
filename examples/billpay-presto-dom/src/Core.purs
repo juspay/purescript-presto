@@ -15,6 +15,11 @@ import Engineering.OS.Permission (checkIfPermissionsGranted, requestPermissions)
 import Engineering.Types.App (AppEffects, CancelerEffects)
 import Presto.Core.Flow (APIRunner, Flow, PermissionCheckRunner, PermissionRunner(..), PermissionTakeRunner, Runtime(..), UIRunner, run, forkUI, runScreen)
 import View.LoginForm (screen) as LoginForm
+import View.SplashScreen (screen) as SplashScreen
+import View.ChooseOperatorScreen (screen) as ChooseOperator
+import View.AskMobileNumberScreen (screen) as AskMobileNumber
+import View.AskAmountScreen (screen) as AskAmount
+import View.StatusScreen (screen) as StatusScreen
 
 main :: Eff (AppEffects) (Canceler (CancelerEffects))
 main = do
@@ -40,4 +45,11 @@ main = do
 appFlow :: Flow Unit
 appFlow = do
   result <- runScreen LoginForm.screen
+  _            <- runScreen SplashScreen.screen
+  -- operators    <- Remote.fetchOperators
+  operator     <- runScreen ChooseOperator.screen --operators
+  mobileNumber <- runScreen AskMobileNumber.screen
+  amount       <- runScreen AskAmount.screen
+  -- -- result       <- Remote.payBill mobileNumber amount operator
+  runScreen StatusScreen.screen --mobileNumber amount result
   pure unit
