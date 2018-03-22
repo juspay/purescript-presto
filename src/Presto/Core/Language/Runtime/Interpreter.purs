@@ -113,6 +113,12 @@ interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
 interpret _ (DoAff aff nextF) = lift aff >>= (pure <<< nextF)
 
+interpret _ (RunScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (ForkScreen uiFlow nextF) = do
+  void $ lift $ forkAff uiFlow
+  pure nextF
+
 interpret _ (Await (Control resultVar) nextF) = do
   lift (peekVar resultVar) >>= (pure <<< nextF)
 
