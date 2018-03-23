@@ -1,4 +1,4 @@
-module Controller.SplashScreen where
+module UI.Controller.Screen.SplashScreen where
 
 import Prelude
 import Data.Either(Either(..))

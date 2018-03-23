@@ -3,7 +3,7 @@ module Remote.Flow where
 import Prelude
 
 import Presto.Core.Flow (Flow)
-import Types.UI (BillPayStatus(..), MobileNumber, Operator, Amount)
+import UI.Types (BillPayStatus(..), MobileNumber, Operator, Amount)
 
 operators :: Array Operator
 operators = [

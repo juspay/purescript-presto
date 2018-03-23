@@ -4,19 +4,21 @@ import Prelude
 
 import Control.Monad.Aff (launchAff, makeAff, Canceler)
 import Control.Monad.Aff.AVar (makeVar')
+import Control.Monad.Trans.Class
 import Control.Monad.Eff (Eff)
+import Data.Time.Duration
 import Control.Monad.State.Trans as S
 import Data.Function.Uncurried (runFn2)
 import Data.StrMap (empty)
 import Engineering.Helpers.Commons (callAPI', mkNativeRequest, showUI')
 import Engineering.OS.Permission (checkIfPermissionsGranted, requestPermissions)
 import Engineering.Types.App (AppEffects, CancelerEffects)
-import Presto.Core.Flow (APIRunner, Flow, PermissionCheckRunner, PermissionRunner(PermissionRunner), PermissionTakeRunner, Runtime(Runtime), UIRunner, run, runScreen)
-import View.SplashScreen (screen) as SplashScreen
-import View.ChooseOperatorScreen (screen) as ChooseOperator
-import View.AskMobileNumberScreen (screen) as AskMobileNumber
-import View.AskAmountScreen (screen) as AskAmount
-import View.StatusScreen (screen) as StatusScreen
+import Presto.Core.Flow (APIRunner, Flow, PermissionCheckRunner, PermissionRunner(PermissionRunner), PermissionTakeRunner, Runtime(Runtime), UIRunner, run, runScreen,forkScreen,delay)
+import UI.View.Screen.SplashScreen (screen) as SplashScreen
+import UI.View.Screen.ChooseOperatorScreen (screen) as ChooseOperator
+import UI.View.Screen.AskMobileNumberScreen (screen) as AskMobileNumber
+import UI.View.Screen.AskAmountScreen (screen) as AskAmount
+import UI.View.Screen.StatusScreen (screen) as StatusScreen
 import Remote.Flow as Remote
 
 main :: Eff (AppEffects) (Canceler (CancelerEffects))
@@ -42,7 +44,8 @@ main = do
 
 appFlow :: Flow Unit
 appFlow = do
-  _            <- runScreen SplashScreen.screen
+  _            <- forkScreen SplashScreen.screen
+  _            <- delay (Milliseconds 1000.0)
   operators    <- Remote.fetchOperators
   operator     <- runScreen (ChooseOperator.screen operators)
   mobileNumber <- runScreen AskMobileNumber.screen
