@@ -12,8 +12,9 @@ import PrestoDOM.Events (onChange, onClick)
 import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
 import Controller.AskAmountScreen(Action(..), State, eval, initialState)
+import Types.UI
 
-screen :: forall eff. Screen Action State eff Unit
+screen :: forall eff. Screen Action State eff Amount
 screen =
   {
     initialState

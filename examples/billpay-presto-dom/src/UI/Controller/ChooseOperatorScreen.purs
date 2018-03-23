@@ -3,18 +3,16 @@ module Controller.ChooseOperatorScreen where
 import Prelude
 import Data.Either(Either(..))
 
-import Controller.FormField as FormField
+import Types.UI(Operator)
 
 
-data Action = AmountEntered String
+data Action = OperatorSelected Operator
 
-type State = String
+type State = Array Operator
 
-initialState :: State
-initialState = "hi"
+initialState :: State -> State
+initialState operators = operators
   
-eval :: Action -> State -> Either Unit State
-eval (AmountEntered amount) state = do
-    if amount > "0"
-        then (Left unit)
-        else (Right state)
+eval :: Action -> State -> Either Operator State
+eval (OperatorSelected operator) state = 
+    Left operator

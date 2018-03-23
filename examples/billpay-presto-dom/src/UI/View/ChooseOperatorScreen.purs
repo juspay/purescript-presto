@@ -11,12 +11,13 @@ import PrestoDOM.Types.DomAttributes
 import PrestoDOM.Events (onChange, onClick)
 import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import Controller.AskAmountScreen(Action(..), State, eval, initialState)
+import Controller.ChooseOperatorScreen(Action(..), State, eval, initialState)
+import Types.UI (Operator)
 
-screen :: forall eff. Screen Action State eff Unit
-screen =
+screen :: Array Operator -> forall eff. Screen Action State eff String
+screen operators =
   {
-    initialState
+    initialState : initialState operators
   , view
   , eval
   }

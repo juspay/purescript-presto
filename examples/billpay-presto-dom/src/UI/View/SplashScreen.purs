@@ -11,7 +11,7 @@ import PrestoDOM.Types.DomAttributes
 import PrestoDOM.Events (onChange, onClick)
 import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import Controller.AskAmountScreen(Action(..), State, eval, initialState)
+import Controller.SplashScreen(Action(..), State, eval, initialState)
 
 screen :: forall eff. Screen Action State eff Unit
 screen =

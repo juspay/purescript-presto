@@ -11,10 +11,11 @@ import PrestoDOM.Types.DomAttributes
 import PrestoDOM.Events (onChange, onClick)
 import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import Controller.AskAmountScreen(Action(..), State, eval, initialState)
+import Controller.StatusScreen(Action(..), State, eval, initialState)
+import Types.UI (MobileNumber , Amount , BillPayStatus)
 
-screen :: forall eff. Screen Action State eff Unit
-screen =
+screen :: MobileNumber -> Amount -> BillPayStatus -> forall eff. Screen Action State eff Unit
+screen mobileNumber amount billPayStatus =
   {
     initialState
   , view

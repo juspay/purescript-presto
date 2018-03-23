@@ -3,18 +3,17 @@ module Controller.AskAmountScreen where
 import Prelude
 import Data.Either(Either(..))
 
-import Controller.FormField as FormField
+import Types.UI(Amount)
 
+data Action = AmountEntered Amount
 
-data Action = AmountEntered String
-
-type State = String
+type State = Amount
 
 initialState :: State
-initialState = "hi"
+initialState = 1.0
   
-eval :: Action -> State -> Either Unit State
+eval :: Action -> State -> Either Amount State
 eval (AmountEntered amount) state = do
-    if amount > "0"
-        then (Left unit)
+    if amount > 0.0
+        then (Left 1.0)
         else (Right state)
