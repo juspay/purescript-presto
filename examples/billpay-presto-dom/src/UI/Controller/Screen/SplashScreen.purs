@@ -6,10 +6,10 @@ import Data.Either(Either(..))
 
 data Action = Rendered
 
-type State = String
+type State = {}
 
 initialState :: State
-initialState = "hi"
+initialState = {}
   
 eval :: Action -> State -> Either Unit State
 eval Rendered state = Left unit
