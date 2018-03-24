@@ -1,20 +1,28 @@
 module UI.View.Component.Operator where
 
-import Prelude
-import Control.Monad.Eff (Eff)
-import DOM (DOM)
+import Prelude (Unit, const, ($))
 import FRP (FRP)
-import Data.Either(Either(..))
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
-import PrestoDOM.Core (mapDom)
-import UI.Controller.Component.Operator (eval,State,Action (..),initialState)
+import Control.Monad.Eff (Eff)
 import Data.String (toLower)
 
-component :: forall i eff. Component Action State eff
+import PrestoDOM.Elements.Elements (imageView, linearLayout, textView)
+import PrestoDOM.Properties (color, fontFamily, gravity, height, imageUrl, margin, name, orientation, text, textSize, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Events (onClick)
+import PrestoDOM.Types.Core (Component, PrestoDOM)
+
+
+data Action = OperatorSelected String
+
+type State = String
+
+initialState :: String -> State
+initialState op = op
+
+eval :: Action -> State -> State
+eval (OperatorSelected operator) state = state 
+
+component :: forall eff. Component Action State eff
 component =
         {
           initialState : initialState "operator"
@@ -22,7 +30,7 @@ component =
         , eval
         }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = linearLayout
                     [ height $ V 50
                     , width Match_Parent

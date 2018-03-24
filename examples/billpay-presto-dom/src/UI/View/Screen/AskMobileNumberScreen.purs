@@ -1,20 +1,38 @@
 module UI.View.Screen.AskMobileNumberScreen where
 
-import Prelude
+import Prelude (Unit, ($), (==))
 import Control.Monad.Eff (Eff)
-import DOM (DOM)
 import FRP (FRP)
+import Data.String (length)
+import Data.Either(Either(..))
 
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
+import PrestoDOM.Elements.Elements (editText, imageView, linearLayout, textView)
+import PrestoDOM.Properties (background, color, fontFamily, gravity, height, hint, imageUrl, margin, name, orientation, stroke, text, textSize, weight, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Events (onChange)
+import PrestoDOM.Types.Core (PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import UI.Controller.Screen.AskMobileNumberScreen(Action(..), State, eval, initialState)
+
 import UI.View.Component.Header as Header
 import UI.View.Component.Button as Button
+import UI.Types(MobileNumber)
 
+data Action = MobileNumberEntered MobileNumber
+            | BackFlow Header.Action
+            | OnProceed Button.Action
+
+type State = MobileNumber
+
+initialState :: State
+initialState = ""
+  
+eval :: Action -> State -> Either MobileNumber State
+eval (MobileNumberEntered mobileNumber) state = Right mobileNumber
+eval (BackFlow action) state = Right state
+eval (OnProceed action) state = 
+    if (length state) == 10
+        then Left state
+        else Right state
 
 screen :: forall eff. Screen Action State eff String
 screen =
@@ -24,7 +42,7 @@ screen =
   , eval
   }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = 
     linearLayout
         [ height Match_Parent

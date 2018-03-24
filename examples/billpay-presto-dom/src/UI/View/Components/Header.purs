@@ -1,19 +1,26 @@
 module UI.View.Component.Header where
 
-import Prelude
+import Prelude (Unit, const, ($))
 import Control.Monad.Eff (Eff)
-import DOM (DOM)
 import FRP (FRP)
-import Data.Either(Either(..))
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
-import PrestoDOM.Core (mapDom)
-import UI.Controller.Component.Header (eval,State,Action (..),initialState)
 
-component :: forall i eff. Component Action State eff
+import PrestoDOM.Elements.Elements (imageView, linearLayout, textView)
+import PrestoDOM.Properties (color, fontFamily, gravity, height, imageUrl, margin, name, orientation, text, textSize, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Events (onClick)
+import PrestoDOM.Types.Core (Component, PrestoDOM)
+
+data Action = Backclick
+
+type State = String
+
+initialState :: String -> State
+initialState label = label
+
+eval :: Action -> State -> State
+eval (Backclick) state = state 
+
+component :: forall eff. Component Action State eff
 component =
         {
           initialState : initialState "Label"
@@ -21,7 +28,7 @@ component =
         , eval
         }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = linearLayout
                     [ height $ V 50
                     , width Match_Parent

@@ -1,17 +1,24 @@
 module UI.View.Screen.SplashScreen where
 
-import Prelude
+import Prelude (Unit, unit, ($))
 import Control.Monad.Eff (Eff)
-import DOM (DOM)
 import FRP (FRP)
+import Data.Either(Either(..))
 
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
-import PrestoDOM.Core (mapDom)
-import UI.Controller.Screen.SplashScreen(Action(..), State, eval, initialState)
+import PrestoDOM.Elements.Elements (linearLayout, textView)
+import PrestoDOM.Properties (background, color, fontFamily, gravity, height, margin, name, orientation, text, textSize, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Types.Core (PrestoDOM, Screen)
+
+data Action = Rendered
+
+type State = {}
+
+initialState :: State
+initialState = {}
+  
+eval :: Action -> State -> Either Unit State
+eval Rendered state = Left unit
 
 screen :: forall eff. Screen Action State eff Unit
 screen =
@@ -21,7 +28,7 @@ screen =
   , eval
   }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = 
     linearLayout
         [ height Match_Parent

@@ -1,21 +1,39 @@
 module UI.View.Screen.AskAmountScreen where
 
-import Prelude
+import Prelude (Unit, ($), (>))
 import Control.Monad.Eff (Eff)
-import DOM (DOM)
 import FRP (FRP)
+import Data.Either(Either(..))
+import Data.Number (fromString)
+import Data.Maybe (fromMaybe)
 
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
+import PrestoDOM.Elements.Elements (editText, imageView, linearLayout, textView)
+import PrestoDOM.Properties (background, color, fontFamily, gravity, height, hint, imageUrl, margin, name, orientation, stroke, text, textSize, weight, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Events (onChange)
+import PrestoDOM.Types.Core (PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import UI.Controller.Screen.AskAmountScreen(Action(..), State, eval, initialState)
-import UI.Types
+
 import UI.View.Component.Header as Header
 import UI.View.Component.Button as Button
+import UI.Types(Amount)
 
+data Action = AmountEntered String
+            | BackFlow Header.Action
+            | OnProceed Button.Action
+
+type State = Amount
+
+initialState :: State
+initialState = 0.0
+  
+eval :: Action -> State -> Either Amount State
+eval (AmountEntered amount) state = Right (fromMaybe 0.0 $ fromString amount)
+eval (BackFlow action) state = Right state
+eval (OnProceed action) state = 
+    if state > 0.0 
+        then Left state  
+        else Right state
 
 screen :: forall eff. Screen Action State eff Amount
 screen =
@@ -25,7 +43,7 @@ screen =
   , eval
   }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = 
     linearLayout
         [ height Match_Parent

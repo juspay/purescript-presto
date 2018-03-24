@@ -1,12 +1,11 @@
 module Core where
 
-import Prelude
+import Prelude (Unit, bind, pure, unit, (>>=))
 
 import Control.Monad.Aff (launchAff, makeAff, Canceler)
 import Control.Monad.Aff.AVar (makeVar')
-import Control.Monad.Trans.Class
 import Control.Monad.Eff (Eff)
-import Data.Time.Duration
+import Data.Time.Duration (Milliseconds(..))
 import Control.Monad.State.Trans as S
 import Data.Function.Uncurried (runFn2)
 import Data.StrMap (empty)
@@ -20,6 +19,20 @@ import UI.View.Screen.AskMobileNumberScreen (screen) as AskMobileNumber
 import UI.View.Screen.AskAmountScreen (screen) as AskAmount
 import UI.View.Screen.StatusScreen (screen) as StatusScreen
 import Remote.Flow as Remote
+
+appFlow :: Flow Unit
+appFlow = do
+  _            <- forkScreen SplashScreen.screen
+  _            <- delay (Milliseconds 1000.0)
+  operators    <- Remote.fetchOperators
+  operator     <- runScreen (ChooseOperator.screen operators)
+  mobileNumber <- runScreen AskMobileNumber.screen
+  amount       <- runScreen AskAmount.screen
+  result       <- Remote.payBill mobileNumber amount operator
+  _            <- runScreen (StatusScreen.screen mobileNumber amount result)
+  pure unit
+
+
 
 main :: Eff (AppEffects) (Canceler (CancelerEffects))
 main = do
@@ -41,15 +54,3 @@ main = do
 
     apiRunner :: APIRunner
     apiRunner request = makeAff (\err sc -> callAPI' err sc (mkNativeRequest request))
-
-appFlow :: Flow Unit
-appFlow = do
-  _            <- forkScreen SplashScreen.screen
-  _            <- delay (Milliseconds 1000.0)
-  operators    <- Remote.fetchOperators
-  operator     <- runScreen (ChooseOperator.screen operators)
-  mobileNumber <- runScreen AskMobileNumber.screen
-  amount       <- runScreen AskAmount.screen
-  result       <- Remote.payBill mobileNumber amount operator
-  _            <- runScreen (StatusScreen.screen mobileNumber amount result)
-  pure unit

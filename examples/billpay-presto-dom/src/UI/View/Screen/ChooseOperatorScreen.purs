@@ -1,19 +1,30 @@
 module UI.View.Screen.ChooseOperatorScreen where
 
-import Prelude
+import Prelude (Unit, map, ($))
 import Control.Monad.Eff (Eff)
-import DOM (DOM)
 import FRP (FRP)
+import Data.Either(Either(..))
 
-import PrestoDOM.Elements.Elements
-import PrestoDOM.Properties
-import PrestoDOM.Types.DomAttributes
-import PrestoDOM.Events (onChange, onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM, Screen)
+import PrestoDOM.Elements.Elements (linearLayout, scrollView, textView)
+import PrestoDOM.Properties (background, color, fontFamily, gravity, height, margin, name, orientation, text, textSize, weight, width)
+import PrestoDOM.Types.DomAttributes (Length(..))
+import PrestoDOM.Types.Core (PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-import UI.Controller.Screen.ChooseOperatorScreen(Action(..), State, eval, initialState)
+
 import UI.Types (Operator)
 import UI.View.Component.Operator as Operator
+
+
+data Action = OperatorSelected Operator.Action
+
+type State = Array Operator
+
+initialState :: State -> State
+initialState operators = operators
+  
+eval :: Action -> State -> Either Operator State
+eval (OperatorSelected (Operator.OperatorSelected operator)) state = Left operator
+
 
 screen :: Array Operator -> forall eff. Screen Action State eff String
 screen operators =
@@ -23,7 +34,7 @@ screen operators =
   , eval
   }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
+view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = 
     linearLayout
         [ height Match_Parent
