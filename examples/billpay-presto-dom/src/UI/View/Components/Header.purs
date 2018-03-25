@@ -8,7 +8,7 @@ import PrestoDOM.Elements.Elements (imageView, linearLayout, textView)
 import PrestoDOM.Properties (color, fontFamily, gravity, height, imageUrl, margin, name, orientation, text, textSize, width)
 import PrestoDOM.Types.DomAttributes (Length(..))
 import PrestoDOM.Events (onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM)
+import PrestoDOM.Types.Core (PrestoDOM)
 
 data Action = Backclick
 
@@ -18,15 +18,7 @@ initialState :: String -> State
 initialState label = label
 
 eval :: Action -> State -> State
-eval (Backclick) state = state 
-
-component :: forall eff. Component Action State eff
-component =
-        {
-          initialState : initialState "Label"
-        , view
-        , eval
-        }
+eval (Backclick) state = state
 
 view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = linearLayout
@@ -51,4 +43,4 @@ view push state = linearLayout
                         , fontFamily "SourceSans Pro-Regular"
                         , margin "4,0,0,0"
                         ]
-                    ]        
+                    ]

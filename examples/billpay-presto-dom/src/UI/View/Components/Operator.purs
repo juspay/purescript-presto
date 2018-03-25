@@ -9,7 +9,7 @@ import PrestoDOM.Elements.Elements (imageView, linearLayout, textView)
 import PrestoDOM.Properties (color, fontFamily, gravity, height, imageUrl, margin, name, orientation, text, textSize, width)
 import PrestoDOM.Types.DomAttributes (Length(..))
 import PrestoDOM.Events (onClick)
-import PrestoDOM.Types.Core (Component, PrestoDOM)
+import PrestoDOM.Types.Core (PrestoDOM)
 
 
 data Action = OperatorSelected String
@@ -20,15 +20,7 @@ initialState :: String -> State
 initialState op = op
 
 eval :: Action -> State -> State
-eval (OperatorSelected operator) state = state 
-
-component :: forall eff. Component Action State eff
-component =
-        {
-          initialState : initialState "operator"
-        , view
-        , eval
-        }
+eval (OperatorSelected operator) state = state
 
 view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
 view push state = linearLayout
@@ -44,7 +36,7 @@ view push state = linearLayout
                         [ height $ V 30
                         , width $ V 30
                         , imageUrl $ toLower state
-                        
+
                         ],
                       textView
                         [ width Match_Parent
