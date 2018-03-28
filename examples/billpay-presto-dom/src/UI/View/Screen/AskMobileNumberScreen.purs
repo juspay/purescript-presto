@@ -15,7 +15,7 @@ import PrestoDOM.Core (mapDom)
 
 import UI.View.Component.Header as Header
 import UI.View.Component.Button as Button
-import UI.Types(MobileNumber)
+import UI.Types (MobileNumber)
 
 data Action = MobileNumberEntered MobileNumber
             | BackFlow Header.Action

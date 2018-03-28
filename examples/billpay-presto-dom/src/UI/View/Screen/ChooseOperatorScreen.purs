@@ -10,10 +10,8 @@ import PrestoDOM.Properties (background, color, fontFamily, gravity, height, mar
 import PrestoDOM.Types.DomAttributes (Length(..))
 import PrestoDOM.Types.Core (PrestoDOM, Screen)
 import PrestoDOM.Core (mapDom)
-
-import UI.Types (Operator)
 import UI.View.Component.Operator as Operator
-
+import UI.Types (Operator)
 
 data Action = OperatorSelected Operator.Action
 

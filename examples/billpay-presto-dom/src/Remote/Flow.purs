@@ -1,11 +1,27 @@
 module Remote.Flow where
 
-import Prelude
+import Prelude (pure)
 
 import Presto.Core.Flow (Flow)
-import UI.Types (BillPayStatus(..), MobileNumber, Operator, Amount)
+import Types.Storage ( Transaction(Transaction), TransactionStatus(SUCCESS))
+import Types.Remote (BillPayRequest(..))
 
-operators :: Array Operator
+
+fetchOperators :: Flow (Array String)
+fetchOperators = pure operators
+
+payBill :: BillPayRequest -> Flow Transaction
+payBill (BillPayRequest req) = pure res
+ where
+  res = Transaction
+    {
+      mobileNumber: req.mobileNumber
+     ,amount:req.amount
+     ,operator:req.operator
+     ,status:SUCCESS
+    }
+
+operators :: Array String
 operators = [
     "Airtel"
   , "Vodafone"
@@ -24,9 +40,3 @@ operators = [
   , "Idea"
   , "MTNL"
 ]
-
-fetchOperators :: Flow (Array Operator)
-fetchOperators = pure operators
-
-payBill :: MobileNumber -> Amount -> Operator -> Flow BillPayStatus
-payBill mobileNumber amount operator= pure SUCCESS

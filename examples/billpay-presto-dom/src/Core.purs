@@ -1,6 +1,6 @@
 module Core where
 
-import Prelude (Unit, bind, pure, unit, (>>=))
+import Prelude (Unit, bind, discard, (=<<), (>>=), (*>))
 
 import Control.Monad.Aff (launchAff, makeAff, Canceler)
 import Control.Monad.Aff.AVar (makeVar')
@@ -12,26 +12,24 @@ import Data.StrMap (empty)
 import Engineering.Helpers.Commons (callAPI', mkNativeRequest, showUI')
 import Engineering.OS.Permission (checkIfPermissionsGranted, requestPermissions)
 import Engineering.Types.App (AppEffects, CancelerEffects)
-import Presto.Core.Flow (APIRunner, Flow, PermissionCheckRunner, PermissionRunner(PermissionRunner), PermissionTakeRunner, Runtime(Runtime), UIRunner, run, runScreen,forkScreen,delay)
-import UI.View.Screen.SplashScreen (screen) as SplashScreen
-import UI.View.Screen.ChooseOperatorScreen (screen) as ChooseOperator
-import UI.View.Screen.AskMobileNumberScreen (screen) as AskMobileNumber
-import UI.View.Screen.AskAmountScreen (screen) as AskAmount
-import UI.View.Screen.StatusScreen (screen) as StatusScreen
+import Presto.Core.Flow (APIRunner, Flow, PermissionCheckRunner, PermissionRunner(PermissionRunner), PermissionTakeRunner,Runtime(Runtime), UIRunner, delay, run)
+import UI.Flow as UI
 import Remote.Flow as Remote
+import Types.Remote
 
 appFlow :: Flow Unit
 appFlow = do
-  _            <- forkScreen SplashScreen.screen
-  _            <- delay (Milliseconds 1000.0)
-  operators    <- Remote.fetchOperators
-  operator     <- runScreen (ChooseOperator.screen operators)
-  mobileNumber <- runScreen AskMobileNumber.screen
-  amount       <- runScreen AskAmount.screen
-  result       <- Remote.payBill mobileNumber amount operator
-  _            <- runScreen (StatusScreen.screen mobileNumber amount result)
-  pure unit
+  UI.splash *> delay (Milliseconds 1000.0)
+  operator     <- UI.chooseOperator =<< Remote.fetchOperators
+  mobileNumber <- UI.askMobileNumber
+  amount       <- UI.askAmount
+  
+  let billPayRequest = BillPayRequest
+                        {mobileNumber:mobileNumber
+                        ,amount: amount
+                        ,operator:operator }
 
+  Remote.payBill billPayRequest >>= UI.showStatus
 
 
 main :: Eff (AppEffects) (Canceler (CancelerEffects))

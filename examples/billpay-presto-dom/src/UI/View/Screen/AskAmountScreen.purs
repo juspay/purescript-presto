@@ -16,8 +16,9 @@ import PrestoDOM.Core (mapDom)
 
 import UI.View.Component.Header as Header
 import UI.View.Component.Button as Button
-import UI.Types(Amount)
+import UI.Types (Amount)
 
+-- TODO: Take a Number from the Screen directly instead of String and converting it to a Number
 data Action = AmountEntered String
             | BackFlow Header.Action
             | OnProceed Button.Action
@@ -35,8 +36,8 @@ eval (OnProceed action) state =
         then Left state  
         else Right state
 
-screen :: forall eff. Screen Action State eff Amount
-screen =
+askAmountScreen :: forall eff. Screen Action State eff Amount
+askAmountScreen =
   {
     initialState
   , view

@@ -9,27 +9,24 @@ import PrestoDOM.Elements.Elements (imageView, linearLayout, textView)
 import PrestoDOM.Properties (background, color, fontFamily, gravity, height, imageUrl, margin, name, orientation, text, textSize, width)
 import PrestoDOM.Types.DomAttributes (Length(..))
 import PrestoDOM.Types.Core (PrestoDOM, Screen)
-
-
-import UI.Types (MobileNumber , Amount , BillPayStatus)
+import Types.Storage (Transaction)
+import Data.Lens((^.))
+import Storage.Accessor
 
 data Action = Rendered
 
-type State = {
-    amount :: String
-,   mobileNumber :: String
-}
+type State = Transaction
 
-initialState :: String -> String -> State
-initialState amount mobileNumber = {amount : amount, mobileNumber: mobileNumber}
+initialState :: State -> State
+initialState txn = txn
   
 eval :: Action -> State -> Either Unit State
 eval Rendered state = Left unit
 
-screen :: MobileNumber -> Amount -> BillPayStatus -> forall eff. Screen Action State eff Unit
-screen mobileNumber amount billPayStatus =
+screen :: Transaction -> forall eff. Screen Action State eff Unit
+screen txn =
   {
-    initialState : initialState mobileNumber $ show amount
+    initialState : initialState txn
   , view
   , eval
   }
@@ -69,7 +66,7 @@ view push state =
               textView
                 [ width Match_Parent
                 , height (V 25)
-                , text $ "You have successfully recharged " <> state.mobileNumber <> " with amount Rs " <> state.amount
+                , text $ "You have successfully recharged " <>  state^._mobileNumber <> " with amount Rs " <> show (state^._amount)
                 , color "#354520"
                 , textSize "16"
                 , fontFamily "SourceSans Pro-Regular"

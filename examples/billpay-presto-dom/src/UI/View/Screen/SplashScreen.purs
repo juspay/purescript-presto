@@ -20,8 +20,8 @@ initialState = {}
 eval :: Action -> State -> Either Unit State
 eval Rendered state = Left unit
 
-screen :: forall eff. Screen Action State eff Unit
-screen =
+splashScreen :: forall eff. Screen Action State eff Unit
+splashScreen =
   {
     initialState
   , view
