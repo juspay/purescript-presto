@@ -13,7 +13,7 @@ module Presto.Core.Language.Runtime.Interpreter
 import Prelude
 
 import Control.Monad.Aff (Aff, forkAff, delay)
-import Control.Monad.Aff.AVar (AVar, makeEmptyVar, takeVar, putVar, readVar)
+import Control.Monad.Aff.AVar (AVar, makeEmptyVar, makeVar, putVar, readVar, takeVar)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Exception (Error, error)
 import Control.Monad.Except (throwError, runExcept)
@@ -27,7 +27,7 @@ import Data.Exists (runExists)
 import Data.Foreign.JSON (parseJSON)
 import Data.Maybe (Maybe)
 import Data.NaturalTransformation (NaturalTransformation)
-import Data.StrMap (StrMap, insert, lookup)
+import Data.StrMap (StrMap, empty, insert, lookup)
 import Data.Tuple (Tuple(..))
 import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
@@ -146,4 +146,4 @@ run :: forall eff. Runtime -> NaturalTransformation Flow (InterpreterSt eff)
 run runtime = foldFree (\(FlowWrapper x) -> runExists (interpret runtime) x)
 
 defaultRun :: forall a e. Runtime -> Flow a -> Aff (AppEffects e) a
-defaultRun runtime flow = makeEmptyVar >>= evalStateT (run runtime flow)
+defaultRun runtime flow = makeVar empty >>= evalStateT (run runtime flow)
