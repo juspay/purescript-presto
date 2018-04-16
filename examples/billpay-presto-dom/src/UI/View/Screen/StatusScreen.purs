@@ -19,7 +19,7 @@ type State = Transaction
 
 initialState :: State -> State
 initialState txn = txn
-  
+
 eval :: Action -> State -> Either Unit State
 eval Rendered state = Left unit
 
@@ -32,7 +32,7 @@ screen txn =
   }
 
 view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
-view push state = 
+view push state =
     linearLayout
         [ height Match_Parent
         , width Match_Parent
@@ -45,10 +45,10 @@ view push state =
             , width $ V 360
             , background "#ffffff"
             , orientation "vertical"
-            , gravity "center_vertical"  
+            , gravity "center_vertical"
             ]
             [ imageView
-                [ height $ V 95 
+                [ height $ V 95
                 , width $ V 112
                 , imageUrl "status"
                 , gravity "left"
@@ -57,7 +57,7 @@ view push state =
               textView
                 [ width Match_Parent
                 , height (V 25)
-                , text "Suceess"
+                , text "Success"
                 , color "#484848"
                 , textSize "32"
                 , fontFamily "SourceSans Pro-Bold"
