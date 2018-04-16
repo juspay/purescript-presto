@@ -33,7 +33,7 @@ view push state =  linearLayout
                       ]
                       [ textView
                           [ width $ V 200
-                          , height $ V 30
+                          , height $ V 16
                           , text state
                           , color "#ffffff"
                           , textSize "16"

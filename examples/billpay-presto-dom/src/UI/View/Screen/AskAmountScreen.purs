@@ -27,13 +27,13 @@ type State = Amount
 
 initialState :: State
 initialState = 0.0
-  
+
 eval :: Action -> State -> Either Amount State
 eval (AmountEntered amount) state = Right (fromMaybe 0.0 $ fromString amount)
 eval (BackFlow action) state = Right state
-eval (OnProceed action) state = 
-    if state > 0.0 
-        then Left state  
+eval (OnProceed action) state =
+    if state > 0.0
+        then Left state
         else Right state
 
 askAmountScreen :: forall eff. Screen Action State eff Amount
@@ -45,7 +45,7 @@ askAmountScreen =
   }
 
 view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
-view push state = 
+view push state =
     linearLayout
         [ height Match_Parent
         , width Match_Parent
@@ -98,14 +98,14 @@ view push state =
                           , onChange push AmountEntered
                           ],
                         linearLayout
-                          [ height $ V 1
+                          [ height $ V 0
                           , width Match_Parent
                           , stroke "1,#0A338D"
                           , margin "5,0,0,0"
                           ]
                           []
-                      ]  
+                      ]
                 ],
-              (mapDom Button.view push "Proceed" OnProceed)  
+              (mapDom Button.view push "PROCEED" OnProceed)
             ]
-        ] 
+        ]

@@ -25,11 +25,11 @@ type State = MobileNumber
 
 initialState :: State
 initialState = ""
-  
+
 eval :: Action -> State -> Either MobileNumber State
 eval (MobileNumberEntered mobileNumber) state = Right mobileNumber
 eval (BackFlow action) state = Right state
-eval (OnProceed action) state = 
+eval (OnProceed action) state =
     if (length state) == 10
         then Left state
         else Right state
@@ -43,7 +43,7 @@ screen =
   }
 
 view :: forall w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
-view push state = 
+view push state =
     linearLayout
         [ height Match_Parent
         , width Match_Parent
@@ -97,14 +97,14 @@ view push state =
                       , onChange push MobileNumberEntered
                       ],
                     linearLayout
-                      [ height $ V 1
+                      [ height $ V 0
                       , width Match_Parent
                       , stroke "1,#0A338D"
                       , margin "5,0,0,0"
                       ]
                       []
-                    ]  
+                    ]
                 ],
-                (mapDom Button.view push "Proceed" OnProceed)   
-            ] 
-        ] 
+                (mapDom Button.view push "PROCEED" OnProceed)
+            ]
+        ]
