@@ -6,7 +6,7 @@ Demo bill payments app using Presto framework.
 
 ```
 npm i
-bower i  # [NOTE :During installation select suitable version for purescript-foreign-generic as 4.3.0]
+bower i
 ```
 
 # Running
