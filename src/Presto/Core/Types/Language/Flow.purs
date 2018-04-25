@@ -145,11 +145,11 @@ doAff :: forall s. (forall eff. AppFlow eff s) -> Flow s
 doAff aff = wrap $ DoAff aff id
 
 -- | Initialize all states and machines required by PrestoDOM. Returns control back immediately.
-initUI :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
-initUI screen = wrap $ InitUI (makeAff (\cb -> PrestoDOM.initUI screen cb)) id
+initUI :: Flow Unit
+initUI = wrap $ InitUI (makeAff (\cb -> PrestoDOM.initUI cb)) id
 
 -- | Initialize all states and machines required by PrestoDOM. Takes a PrestoDOM Screen and returns control back immediately.
-initUIWithScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
+initUIWithScreen :: forall action state. (forall eff. Screen action state eff Unit) -> Flow Unit
 initUIWithScreen screen = wrap $ InitUIWithScreen (makeAff (\cb -> PrestoDOM.initUIWithScreen screen cb)) id
 
 -- | Runs PrestoDOM Screen and returns the result. In this case, the whole screen is rerendered.
