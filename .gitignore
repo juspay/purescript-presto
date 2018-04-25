@@ -1,3 +1,5 @@
 /bower_components/
 /.pulp-cache/
 /output/
+.psa-stash
+.psc-ide-port
