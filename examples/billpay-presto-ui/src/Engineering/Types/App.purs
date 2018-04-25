@@ -24,16 +24,6 @@ type AppEffects = (
   , network :: NETWORK
   , timer :: TIMER)
 
-type CancelerEffects = (
-	  avar :: AVAR
-  , ui :: UI
-  , storage :: STORAGE
-  , ls :: LOCAL_STORAGE
-  , exception :: EXCEPTION
-  , network :: NETWORK
-  , console :: CONSOLE
-  , timer :: TIMER)
-
 type Flow e a = (ExceptT e (Free FlowWrapper) a)
                   
 

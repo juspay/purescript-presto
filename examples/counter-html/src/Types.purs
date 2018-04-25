@@ -30,16 +30,6 @@ type AppEffects = (
   , network :: NETWORK
   , timer :: TIMER)
 
-type CancelerEffects = (
-    avar :: AVAR
-  , ui :: UI
-  , storage :: STORAGE
-  , ls :: LOCAL_STORAGE
-  , exception :: EXCEPTION
-  , network :: NETWORK
-  , console :: CONSOLE
-  , timer :: TIMER)
-
 newtype NativeRequest = NativeRequest
  { method :: String
  , url :: URL

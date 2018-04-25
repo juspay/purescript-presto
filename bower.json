@@ -11,13 +11,13 @@
   "dependencies": {
     "purescript-prelude": "^3.1.0",
     "purescript-console": "^3.0.0",
-    "purescript-aff": "^3.1.0",
+    "purescript-aff": "^4.0.1",
     "purescript-free": "^4.1.0",
     "purescript-exists": "^3.0.0",
     "purescript-control": "^3.3.0",
     "purescript-foreign-generic": "5.0.0",
     "purescript-generics-rep": "^5.2.0",
-    "purescript-spec": "^1.0.0",
+    "purescript-spec": "^2.0.0",
     "purescript-transformers": "^3.4.0",
     "purescript-tuples": "^4.1.0",
     "purescript-maps": "^3.5.1",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",
-    "purescript-spec": "^1.0.0"
+    "purescript-spec": "^2.0.0"
   },
   "homepage": "https://github.com/juspay/purescript-presto",
   "description": "eDSL for writing Apps",
