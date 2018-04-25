@@ -111,6 +111,10 @@ interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
 interpret _ (DoAff aff nextF) = lift aff >>= (pure <<< nextF)
 
+interpret _ (InitUIWithScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (InitUI uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
 interpret _ (RunScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
 
 interpret _ (ForkScreen uiFlow nextF) = do
