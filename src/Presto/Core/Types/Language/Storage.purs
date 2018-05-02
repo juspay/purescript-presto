@@ -9,10 +9,12 @@ import Prelude
 
 import Control.Monad.Except (runExcept)
 import Data.Either (hush)
+import Data.Foreign (Foreign)
 import Data.Foreign.Class (class Decode)
 import Data.Foreign.Generic (decodeJSON, encodeJSON)
 import Data.Maybe (Maybe(..))
-import Data.Traversable (traverse)
+import Data.Traversable (intercalate, traverse)
+import Global.Unsafe (unsafeStringify)
 
 type Key = String
 
@@ -44,5 +46,14 @@ instance charSerializable :: Serializable Char where
   deserialize = primDeserialize
 
 instance arraySerializable :: Serializable a => Serializable (Array a) where
-  serialize = map serialize >>> encodeJSON
-  deserialize a = primDeserialize a >>= traverse deserialize
+  serialize a = "[" <> (intercalate "," (serialize <$> a)) <> "]"
+  deserialize a = (toStringArray <$> toForeignArray a) >>= deserializeArray
+    where
+      toForeignArray :: String -> Maybe (Array Foreign)
+      toForeignArray = decodeJSON >>> runExcept >>> hush
+
+      toStringArray :: Array Foreign -> Array String
+      toStringArray = map unsafeStringify
+
+      deserializeArray :: Array String -> Maybe (Array a)
+      deserializeArray = traverse deserialize
