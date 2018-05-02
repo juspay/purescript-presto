@@ -8,7 +8,7 @@ module Presto.Core.Types.Language.Storage
 import Prelude
 
 import Control.Monad.Except (runExcept)
-import Data.Either (either)
+import Data.Either (hush)
 import Data.Foreign.Class (class Decode)
 import Data.Foreign.Generic (decodeJSON, encodeJSON)
 import Data.Maybe (Maybe(..))
@@ -25,7 +25,7 @@ instance stringSerializable :: Serializable String where
   deserialize = Just
 
 primDeserialize :: forall a. Decode a => String -> Maybe a
-primDeserialize = decodeJSON >>> runExcept >>> either (const Nothing) Just
+primDeserialize = decodeJSON >>> runExcept >>> hush
 
 instance booleanSerializable :: Serializable Boolean where
   serialize = encodeJSON
