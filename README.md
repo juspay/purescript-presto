@@ -16,7 +16,7 @@ You can get your hands dirty by building a mobile recharge app using Presto
 
 ```
 git clone https://github.com/juspay/purescript-presto.git
-cd examples/billpay-react
+cd purescript-presto/examples/billpay-react
 npm i
 bower i
 npm start
