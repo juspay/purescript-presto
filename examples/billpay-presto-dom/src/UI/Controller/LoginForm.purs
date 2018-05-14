@@ -1,20 +1,21 @@
 module Controller.LoginForm where
 
 import Prelude
-import Data.Either(Either(..))
 
 import Controller.FormField as FormField
-
+import PrestoDOM (exit, updateAndExit, continue, Eval)
+import PrestoDOM.Types.DomAttributes (Visibility(..))
 
 data Action =
-  Username FormField.Action
-  | Password FormField.Action
+  UsernameAction FormField.Action
+  | PasswordAction FormField.Action
   | SubmitClicked
 
 type State =
   { errorMessage :: String
   , usernameState :: FormField.State
   , passwordState :: FormField.State
+  , visibility :: Visibility
   }
 
 initialState :: State
@@ -22,12 +23,13 @@ initialState =
   { errorMessage : ""
   , usernameState : (FormField.initialState "username")
   , passwordState : (FormField.initialState "password")
+  , visibility : VISIBLE
   }
 
-eval :: Action -> State -> Either Unit State
-eval (Username action) state = Right $ state { usernameState = FormField.eval action state.usernameState }
-eval (Password action) state = Right $ state { passwordState = FormField.eval action state.passwordState }
+eval :: forall eff. Action -> State -> Eval eff Action Unit State
+eval (UsernameAction action) state = continue $ state { usernameState = FormField.eval action state.usernameState }
+eval (PasswordAction action) state = continue $ state { passwordState = FormField.eval action state.passwordState }
 eval SubmitClicked state =
     if state.passwordState.value == "blueberry" && state.usernameState.value /= ""
-        then (Left unit)
-        else (Right $ state { errorMessage = "Your account is blocked" })
+        then (updateAndExit (state { visibility = GONE }) unit)
+        else (continue $ state { errorMessage = "Your account is blocked" })

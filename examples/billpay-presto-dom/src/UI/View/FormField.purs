@@ -1,52 +1,42 @@
 module View.FormField where
 
 import Prelude
-import Control.Monad.Eff (Eff)
-import DOM (DOM)
-import FRP (FRP)
 
+import Data.StrMap (StrMap)
 import PrestoDOM.Elements.Elements
 import PrestoDOM.Properties
 import PrestoDOM.Types.DomAttributes
 import PrestoDOM.Events (onChange)
-import PrestoDOM.Types.Core (Component, PrestoDOM)
-import Controller.FormField(Action(..), State, eval, initialState)
+import PrestoDOM.Types.Core (PrestoDOM, PropEff)
+import Controller.FormField(Action(..), State)
 
-component :: forall i eff. Component Action State eff
-component =
-  {
-    initialState : initialState "Label"
-  , view
-  , eval
-  }
 
-view :: forall i w eff. (Action -> Eff (frp :: FRP | eff) Unit) -> State -> PrestoDOM Action w
-view push state =
+view :: forall w eff. (Action -> PropEff eff) -> State -> StrMap String -> PrestoDOM (PropEff eff) w
+view push state _ =
   linearLayout
     [ height $ V 150
-    , width Match_Parent
-    , orientation "vertical"
-    , margin "20,20,20,20"
+    , width MATCH_PARENT
+    , orientation VERTICAL
+    , margin $ Margin 20 20 20 20
     ]
     [ linearLayout
         [ height $ V 30
-        , width Match_Parent
-        , margin "10,20,20,20"
+        , width MATCH_PARENT
+        , margin $ Margin 10 20 20 20
         , text state.text
-        , textSize "28"
+        , textSize 28
         ]
         []
     , linearLayout
         []
         [ editText
-        [ height (V 40)
-        , width Match_Parent
-        , margin "10,10,10,10"
-        , textSize "20"
-        , name "name"
-        , color "#00000"
-        , text state.value
-        , onChange push TextChanged
-        ]
+            [ height (V 40)
+            , width MATCH_PARENT
+            , margin $ Margin 10 10 10 10
+            , textSize 20
+            , color "#00000"
+            , text state.value
+            , onChange push TextChanged
+            ]
         ]
     ]
