@@ -11,7 +11,7 @@
   "dependencies": {
     "purescript-prelude": "^3.1.0",
     "purescript-console": "^3.0.0",
-    "purescript-aff": "^4.0.1",
+    "purescript-aff": "^4.1.1",
     "purescript-free": "^4.1.0",
     "purescript-exists": "^3.0.0",
     "purescript-control": "^3.3.0",
@@ -22,7 +22,7 @@
     "purescript-tuples": "^4.1.0",
     "purescript-maps": "^3.5.1",
     "purescript-datetime": "^3.3.0",
-    "purescript-presto-dom": "https://bitbucket.org/juspay/purescript-presto-dom.git#v0.2"
+    "purescript-presto-dom": "https://bitbucket.org/juspay/purescript-presto-dom.git"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0",
