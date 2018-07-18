@@ -9,10 +9,10 @@ import Prelude
 
 import Control.Monad.Except (runExcept)
 import Data.Either (either)
-import Data.Foreign.Class (class Decode)
-import Data.Foreign.Generic (decodeJSON, encodeJSON)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (traverse)
+import Foreign.Class (class Decode)
+import Foreign.Generic (decodeJSON, encodeJSON)
 
 type Key = String
 
@@ -21,7 +21,7 @@ class Serializable a where
   deserialize :: String -> Maybe a
 
 instance stringSerializable :: Serializable String where
-  serialize = id
+  serialize = identity
   deserialize = Just
 
 primDeserialize :: forall a. Decode a => String -> Maybe a

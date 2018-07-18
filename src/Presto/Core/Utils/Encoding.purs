@@ -9,12 +9,13 @@ module Presto.Core.Utils.Encoding
 
 import Prelude
 
-import Data.Foreign (Foreign, F)
-import Data.Foreign.Generic (defaultOptions, genericDecode, genericDecodeJSON, genericEncode, genericEncodeJSON)
-import Data.Foreign.Generic.Class (class GenericDecode, class GenericEncode)
-import Data.Foreign.Generic.EnumEncoding (class GenericDecodeEnum, class GenericEncodeEnum, genericDecodeEnum, genericEncodeEnum)
-import Data.Foreign.Generic.Types (Options)
 import Data.Generic.Rep (class Generic)
+import Foreign (Foreign, F)
+import Foreign.Generic (defaultOptions, genericDecode, genericDecodeJSON, genericEncode, genericEncodeJSON)
+import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
+import Foreign.Generic.EnumEncoding (class GenericDecodeEnum, class GenericEncodeEnum, genericDecodeEnum, genericEncodeEnum)
+import Foreign.Generic.Types (Options)
+
 
 options :: Options
 options = defaultOptions { unwrapSingleConstructors = true }
@@ -26,10 +27,10 @@ defaultEncode ::  forall a b. Generic a b => GenericEncode b => a -> Foreign
 defaultEncode x = genericEncode options x
 
 defaultEnumDecode :: forall a b. Generic a b => GenericDecodeEnum b => Foreign -> F a
-defaultEnumDecode x = genericDecodeEnum { constructorTagTransform: id } x
+defaultEnumDecode x = genericDecodeEnum { constructorTagTransform: identity } x
 
 defaultEnumEncode ::  forall a b. Generic a b => GenericEncodeEnum b => a -> Foreign
-defaultEnumEncode x = genericEncodeEnum { constructorTagTransform: id } x
+defaultEnumEncode x = genericEncodeEnum { constructorTagTransform: identity } x
 
 defaultDecodeJSON :: forall a b. Generic a b => GenericDecode b => String -> F a
 defaultDecodeJSON x = genericDecodeJSON options x

@@ -6,7 +6,7 @@ import Prelude
 
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
-import Data.Foreign.Class (class Decode, class Encode, decode, encode)
+import Foreign.Class (class Decode, class Encode, decode, encode)
 
 import Presto.Core.Types.Language.Interaction (Interaction, request)
 import Presto.Core.Types.API (class RestEndpoint, ErrorPayload(..), ErrorResponse, Response(..), Headers, decodeResponse, makeRequest)
@@ -24,10 +24,12 @@ apiInteract a headers = do
     Left x -> Left $ case runExcept (decode fgnOut >>= defaultDecodeJSON) of
                        -- See if the server sent an error response, else create our own
                        Right e@(Response _) -> e
-                       Left y -> Response { code: 0
-                                          , status: ""
-                                          , response: ErrorPayload { error: true
-                                                                   , errorMessage: show x <> "\n" <> show y
-                                                                   , userMessage: "Unknown error"
-                                                                   }
-                                          }
+                       Left y -> Response
+                                    { code : 0
+                                    , status : ""
+                                    , response : ErrorPayload
+                                                    { error: true
+                                                    , errorMessage: show x <> "\n" <> show y
+                                                    , userMessage: "Unknown error"
+                                                    }
+                                    }

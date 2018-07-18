@@ -9,22 +9,26 @@
     "tests"
   ],
   "dependencies": {
-    "purescript-prelude": "^3.1.0",
-    "purescript-console": "^3.0.0",
-    "purescript-aff": "^4.1.1",
-    "purescript-free": "^4.1.0",
-    "purescript-exists": "^3.0.0",
-    "purescript-control": "^3.3.0",
-    "purescript-foreign-generic": "5.0.0",
-    "purescript-generics-rep": "^5.2.0",
-    "purescript-transformers": "^3.4.0",
-    "purescript-tuples": "^4.1.0",
-    "purescript-maps": "^3.5.1",
-    "purescript-datetime": "^3.3.0"
+    "purescript-prelude": "^4.0.0",
+    "purescript-aff": "^5.0.0",
+    "purescript-avar": "^3.0.0",
+    "purescript-console": "^4.1.0",
+    "purescript-control": "^4.0.0",
+    "purescript-datetime": "^4.0.0",
+    "purescript-exceptions": "^4.0.0",
+    "purescript-exists": "^4.0.0",
+    "purescript-free": "^5.0.0",
+    "purescript-foreign-generic": "https://github.com/justinwoo/purescript-foreign-generic.git#compiler/0.12",
+    "purescript-foreign-object": "^1.0.0",
+    "purescript-generics-rep": "^6.0.0",
+    "purescript-transformers": "^4.1.0",
+    "purescript-record": "^1.0.0",
+    "purescript-typelevel-prelude": "^3.0.0",
+    "purescript-tuples": "^5.0.0"
   },
   "devDependencies": {
-    "purescript-psci-support": "^3.0.0",
-    "purescript-spec": "^2.0.0"
+    "purescript-psci-support": "^4.0.0",
+    "purescript-spec": "^3.0.0"
   },
   "homepage": "https://github.com/juspay/purescript-presto",
   "description": "eDSL for writing Apps",

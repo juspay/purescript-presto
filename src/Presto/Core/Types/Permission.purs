@@ -5,11 +5,12 @@ module Presto.Core.Types.Permission
   ) where
 
 import Prelude
+
 import Data.Tuple (Tuple)
-import Data.Foreign.Class (class Decode, class Encode)
-import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
+import Foreign.Class (class Decode, class Encode)
+import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 
 data PermissionStatus = PermissionGranted
                       | PermissionDeclined
