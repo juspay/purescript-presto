@@ -3,8 +3,9 @@ module Test.Language.FlowTest where
 import Prelude
 
 import Control.Alt ((<|>))
-import Control.Monad.Aff as Aff
-import Control.Monad.Aff.AVar (readVar)
+import Effect.Aff as Aff
+import Effect.Aff (Aff)
+import Effect.Aff.AVar (read) as AV
 import Control.Monad.State.Trans (runStateT, evalStateT)
 import Data.Map (member, empty, insert, singleton)
 import Data.Maybe (Maybe(..))
@@ -14,9 +15,8 @@ import Data.Tuple (Tuple(..))
 import Presto.Core.Flow (class Serializable, Flow, get, set, load, save, fork, await, await', doAff, delay, oneOf)
 import Presto.Core.Operators (onFirstRun, inParallel)
 import Presto.Core.Types.Language.Flow (Store(..))
-import Test.Common (TestCase, TestFixture)
 import Test.Runtime.Interpreter (mkEmptySt, mkSt, mkStVar, run)
-import Test.Spec (describe, it)
+import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldContain, shouldEqual)
 import Test.TestData.MyInt (MyInt(..))
 import Test.TestData.Some (Some(..))
@@ -45,7 +45,7 @@ getMobilePhoneFlow InMemoryStore = get mobileNumberKey
 getSomeAndMobilePhoneFlow :: Store -> Flow (Tuple (Maybe Some) (Maybe MobileNumber))
 getSomeAndMobilePhoneFlow store = Tuple <$> getSomeFlow store <*> getMobilePhoneFlow store
 
-getTest :: forall eff. Store -> TestCase eff
+getTest :: Store -> Aff Unit
 getTest store = do
   let store1 = insert "some" "abc" empty
   let store2 = insert mobileNumberKey "+5 555 555 555" store1
@@ -75,7 +75,7 @@ setGet InMemoryStore some = do
   _ :: Maybe Some <- get ""
   get "some2"
 
-setGetTest :: forall eff. Store -> TestCase eff
+setGetTest :: Store -> Aff Unit
 setGetTest store = do
   stVar <- mkStVar $ mkSt 0 empty
   let m = setGet store (Some {someField: "this"})
@@ -88,11 +88,11 @@ onFirstRunFlow1 = onFirstRun "42" $ pure $ MyInt 42
 onFirstRunFlow2 :: Flow MyInt
 onFirstRunFlow2 = onFirstRun "42" $ pure $ MyInt 444444
 
-onFirstRunFlowTest :: forall eff. TestCase eff
+onFirstRunFlowTest :: Aff Unit
 onFirstRunFlowTest = do
   stVar <- mkStVar mkEmptySt
   Tuple r1 st1 <- runStateT (run onFirstRunFlow1) stVar
-  store1 <- readVar st1 >>= (pure <<< _.store)
+  store1 <- AV.read st1 >>= (pure <<< _.store)
   let expected1 = "42" `member` store1
   expected1 `shouldEqual` true
   r1 `shouldEqual` (MyInt 42)
@@ -108,13 +108,13 @@ parentFlow = do
   child2 <- fork (childFlow "EFGH")
   (<>) <$> await child1 <*> await child2
 
-forkAwaitTest :: forall eff. TestCase eff
+forkAwaitTest :: Aff Unit
 forkAwaitTest = do
   stVar <- mkStVar mkEmptySt
   Tuple r _ <- runStateT (run parentFlow) stVar
   r `shouldEqual` "ABCDEFGH"
 
-doAffTest :: forall eff. TestCase eff
+doAffTest :: Aff Unit
 doAffTest = do
   stVar <- mkStVar mkEmptySt
   r <- evalStateT (run affFlow) stVar
@@ -132,7 +132,7 @@ parentFlow2 = do
   _ <- fork (childFlow "EFGH")
   (<>) <$> await child1 <*> await child1
 
-awaitTwiceTest :: forall eff. TestCase eff
+awaitTwiceTest :: Aff Unit
 awaitTwiceTest = do
   stVar <- mkStVar mkEmptySt
   Tuple r _ <- runStateT (run parentFlow2) stVar
@@ -152,28 +152,28 @@ concurrentUpdateFlow = do
   inParallel [updateFlow 5 "A", updateFlow 10 "B"] >>= (traverse_ await')
   Tuple <$> load "A" <*> load "B"
 
-storeConcurrencyTest :: forall eff. TestCase eff
+storeConcurrencyTest :: Aff Unit
 storeConcurrencyTest = do
   stVar <- mkStVar mkEmptySt
   Tuple (Tuple mbA mbB) _ <- runStateT (run concurrentUpdateFlow) stVar
   mbA `shouldEqual` (Just "AAAAA")
   mbB `shouldEqual` (Just "BBBBBBBBBB")
 
-oneOfTest :: forall eff. TestCase eff
+oneOfTest :: Aff Unit
 oneOfTest = do
   stVar <- mkStVar $ mkSt 0 $ singleton "initialState" "xxx"
   Tuple (Tuple mbA mbB) stVar' <- runStateT (run oneOfUpdateFlow) stVar
   -- At least one should be resolved to our satisfaction
   [Just "AAAAA", Just "BBBBBBBBBB"] `shouldContain` (mbA <|> mbB)
   -- And the state should not be lost
-  stNew <- readVar stVar'
+  stNew <- AV.read stVar'
   stNew.store `shouldContain` "xxx"
   where
     oneOfUpdateFlow = do
       oneOf [updateFlow 5 "A", updateFlow 10 "B"]
       Tuple <$> load "A" <*> load "B"
 
-runTests :: forall eff. TestFixture eff
+runTests :: Spec Unit
 runTests = do
   describe "Flow language test" do
     it "OnFirstRun test" onFirstRunFlowTest

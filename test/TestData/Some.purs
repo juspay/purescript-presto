@@ -1,8 +1,8 @@
 module Test.TestData.Some where
 
 import Prelude
-import Control.Monad.Eff.Exception (Error)
-import Data.Foreign.Class (class Decode, class Encode)
+import Effect.Exception (Error)
+import Foreign.Class (class Decode, class Encode)
 import Data.Generic.Rep (class Generic) as G
 import Data.Maybe (Maybe(..))
 
