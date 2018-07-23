@@ -3,13 +3,14 @@ module Test.Language.ApiInteractionTest where
 import Prelude
 
 import Control.Monad.State.Trans as S
-import Effect.Aff (Aff)
-import Foreign.Class (class Decode, class Encode, encode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Eq as GEq
 import Data.Generic.Rep.Show as GShow
 import Data.Map (empty)
+import Effect.Aff (Aff)
+import Foreign.Class (class Decode, class Encode, encode)
 import Global.Unsafe (unsafeStringify)
+
 import Presto.Core.Types.API (Request(..)) as API
 import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers(..), Method(..), defaultDecodeResponse)
 import Presto.Core.Types.Language.Flow (Flow, callAPI, suppress, withError)

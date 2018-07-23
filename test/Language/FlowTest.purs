@@ -3,15 +3,16 @@ module Test.Language.FlowTest where
 import Prelude
 
 import Control.Alt ((<|>))
-import Effect.Aff as Aff
-import Effect.Aff (Aff)
-import Effect.Aff.AVar (read) as AV
 import Control.Monad.State.Trans (runStateT, evalStateT)
 import Data.Map (member, empty, insert, singleton)
 import Data.Maybe (Maybe(..))
 import Data.Time.Duration (Milliseconds(..))
 import Data.Traversable (traverse_)
 import Data.Tuple (Tuple(..))
+import Effect.Aff as Aff
+import Effect.Aff (Aff)
+import Effect.Aff.AVar (read) as AV
+
 import Presto.Core.Flow (class Serializable, Flow, get, set, load, save, fork, await, await', doAff, delay, oneOf)
 import Presto.Core.Operators (onFirstRun, inParallel)
 import Presto.Core.Types.Language.Flow (Store(..))

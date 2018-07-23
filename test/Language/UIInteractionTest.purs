@@ -1,16 +1,16 @@
 module Test.Language.UIInteractionTest where
 
 import Prelude
-import Effect.Aff (Aff)
-import Effect.Exception (error, Error)
 import Control.Monad.State.Trans as S
 import Data.Map (empty)
 import Data.Either (Either(..))
-import Foreign.Class (class Encode, class Decode, encode)
-import Foreign.Generic (defaultOptions, genericEncode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show as GShow
 import Data.Generic.Rep.Eq as GEq
+import Effect.Aff (Aff)
+import Effect.Exception (error, Error)
+import Foreign.Class (class Encode, class Decode, encode)
+import Foreign.Generic (defaultOptions, genericEncode)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 

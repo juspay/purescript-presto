@@ -24,6 +24,7 @@ import Effect.Exception (Error, error)
 import Foreign.JSON (parseJSON)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)
+
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
 import Presto.Core.LocalStorage (getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
@@ -45,9 +46,7 @@ data PermissionRunner = PermissionRunner PermissionCheckRunner PermissionTakeRun
 
 data Runtime = Runtime UIRunner PermissionRunner APIRunner
 
--- FIXME: can the effects on the interepreter of each type be more fine-grained?
 
--- TODO: Why StrMap
 readState :: InterpreterSt (Object.Object String)
 readState = S.get >>= (lift <<< AV.read)
 

@@ -1,10 +1,10 @@
 module Test.TestData.Some where
 
 import Prelude
-import Effect.Exception (Error)
-import Foreign.Class (class Decode, class Encode)
 import Data.Generic.Rep (class Generic) as G
 import Data.Maybe (Maybe(..))
+import Effect.Exception (Error)
+import Foreign.Class (class Decode, class Encode)
 
 import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode)
 import Presto.Core.Types.Language.Storage (class Serializable)

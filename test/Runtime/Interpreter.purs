@@ -2,21 +2,21 @@ module Test.Runtime.Interpreter where
 
 import Prelude
 
-import Effect.Aff (Aff, delay, forkAff)
-import Effect.Aff.AVar as AV
-import Effect.Class.Console (warn)
-import Effect.Class (liftEffect)
-import Effect.Exception (throw)
 import Control.Monad.Free (foldFree)
 import Control.Monad.State.Trans (StateT, get, put, evalStateT, runStateT) as S
 import Control.Monad.Trans.Class (lift)
 import Control.Parallel (parOneOf)
 import Data.Exists (runExists)
-import Foreign (Foreign)
 import Data.Map (Map, empty, insert, lookup)
 import Data.Maybe (Maybe(..))
-import Data.NaturalTransformation (NaturalTransformation)
 import Data.Tuple (Tuple(..))
+import Effect.Aff (Aff, delay, forkAff)
+import Effect.Aff.AVar as AV
+import Effect.Class.Console (warn)
+import Effect.Class (liftEffect)
+import Effect.Exception (throw)
+import Foreign (Foreign)
+
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowWrapper(..), FlowMethodF(..), Control(..))
 import Presto.Core.Types.Language.Interaction (ForeignIn(..), ForeignOut(..), Interaction, InteractionF(..))
 import Presto.Core.Types.Language.Storage (Key)
@@ -87,7 +87,7 @@ forkFlow flow = do
   pure $ Control resultVar
 
 
-interpret :: forall s. NaturalTransformation (FlowMethod s) InterpreterSt
+interpret :: forall s. FlowMethod s ~> InterpreterSt
 
 interpret (RunUI uiInteraction nextF) = do
   runUIInteraction uiInteraction >>= (pure <<< nextF)

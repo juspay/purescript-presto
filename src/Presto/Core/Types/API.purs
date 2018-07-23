@@ -25,6 +25,7 @@ import Data.Generic.Rep (class Generic)
 import Foreign (F)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
+
 import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
 
 class RestEndpoint a b | a -> b, b -> a where
