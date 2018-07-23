@@ -7,6 +7,7 @@ import Data.Either (Either, either)
 import Data.Exists (Exists, mkExists)
 import Data.Maybe (Maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
+import Effect.Aff (Aff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
 import Foreign.Class (class Decode, class Encode)

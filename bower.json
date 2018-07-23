@@ -18,7 +18,7 @@
     "purescript-exceptions": "^4.0.0",
     "purescript-exists": "^4.0.0",
     "purescript-free": "^5.0.0",
-    "purescript-foreign-generic": "https://github.com/justinwoo/purescript-foreign-generic.git#compiler/0.12",
+    "purescript-foreign-generic": "^7.0.0",
     "purescript-foreign-object": "^1.0.0",
     "purescript-generics-rep": "^6.0.0",
     "purescript-transformers": "^4.1.0",

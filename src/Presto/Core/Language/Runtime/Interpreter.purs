@@ -16,7 +16,6 @@ import Control.Monad.Trans.Class (lift)
 import Control.Parallel (parOneOf)
 import Data.Either (Either(..))
 import Data.Exists (runExists)
-import Data.NaturalTransformation (NaturalTransformation)
 import Data.Tuple (Tuple(..))
 import Effect.Aff (Aff, forkAff, delay)
 import Effect.Aff.AVar as AV
@@ -35,7 +34,7 @@ import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionS
 type AffError = (Error -> Effect Unit)
 type AffSuccess s = (s -> Effect Unit)
 
-type St = AVar (Object.Object String)
+type St = AV.AVar (Object.Object String)
 type InterpreterSt a = S.StateT St Aff a
 
 type UIRunner = String -> Aff String
@@ -59,14 +58,14 @@ updateState key value = do
   let st' = Object.insert key value st
   lift $ AV.put st' stVar
 
-interpretUI :: UIRunner -> NaturalTransformation InteractionF Aff
+interpretUI :: UIRunner -> InteractionF ~> Aff
 interpretUI uiRunner (Request fgnIn nextF) = do
   json <- uiRunner $ unsafeStringify fgnIn
   case (runExcept (parseJSON json)) of
     Right fgnOut -> pure $ nextF $ ForeignOut fgnOut
     Left err -> throwError $ error $ show err
 
-runUIInteraction :: UIRunner -> NaturalTransformation Interaction Aff
+runUIInteraction :: UIRunner -> Interaction ~> Aff
 runUIInteraction uiRunner = foldFree (interpretUI uiRunner)
 
 -- TODO: canceller support
@@ -82,7 +81,7 @@ runErrorHandler :: forall s. ErrorHandler s -> InterpreterSt s
 runErrorHandler (ThrowError msg) = throwError $ error msg
 runErrorHandler (ReturnResult res) = pure res
 
-interpret :: forall s. Runtime -> NaturalTransformation (FlowMethod s) InterpreterSt
+interpret :: forall s. Runtime -> FlowMethod s ~> InterpreterSt
 interpret (Runtime _ _ apiRunner) (CallAPI apiInteractionF nextF) = do
   lift $ runAPIInteraction apiRunner apiInteractionF
     >>= (pure <<< nextF)
@@ -133,5 +132,5 @@ interpret (Runtime _ (PermissionRunner check _) _) (CheckPermissions permissions
 interpret (Runtime _ (PermissionRunner _ take) _) (TakePermissions permissions nextF) = do
   lift $ take permissions >>= (pure <<< nextF)
 
-run :: forall eff. Runtime -> NaturalTransformation Flow InterpreterSt
+run :: Runtime -> Flow ~> InterpreterSt
 run runtime = foldFree (\(FlowWrapper x) -> runExists (interpret runtime) x)
