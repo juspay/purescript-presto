@@ -25,7 +25,7 @@ import Data.Foreign (F)
 import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic.Class (class GenericDecode, class GenericEncode)
 import Data.Generic.Rep (class Generic)
-import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
+import Presto.Core.Utils.Encoding (defaultDecode, defaultEnumEncode,defaultEnumDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
 
 class RestEndpoint a b | a -> b, b -> a where
   makeRequest :: a -> Headers -> Request
@@ -92,9 +92,9 @@ type ErrorResponse = Response ErrorPayload
 
 derive instance genericMethod :: Generic Method _
 instance encodeMethod :: Encode Method where
-  encode = defaultEncode
+  encode = defaultEnumEncode
 instance decodeMethod :: Decode Method where
-  decode = defaultDecode
+  decode = defaultEnumDecode
 instance showMethod :: Show Method where
   show POST = "POST"
   show GET = "GET"
@@ -118,7 +118,7 @@ instance encodeRequestG :: Encode Request where
   encode = defaultEncode
 instance decodeRequestG :: Decode Request where
   decode = defaultDecode
-  
+
 derive instance genericErrorPayload :: Generic ErrorPayload _
 instance encodeErrorPayload :: Encode ErrorPayload where
   encode = defaultEncode
