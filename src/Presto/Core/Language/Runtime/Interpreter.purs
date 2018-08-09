@@ -117,9 +117,7 @@ interpret _ (InitUI uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
 
 interpret _ (RunScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
 
-interpret _ (ForkScreen uiFlow nextF) = do
-  void $ lift $ forkAff uiFlow
-  pure nextF
+interpret _ (ShowScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
 
 interpret _ (Await (Control resultVar) nextF) = do
   lift (readVar resultVar) >>= (pure <<< nextF)

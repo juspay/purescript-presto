@@ -17,7 +17,7 @@ import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
 import Presto.Core.Types.Permission (Permission, PermissionStatus, PermissionResponse)
-import PrestoDOM.Core (runScreen, initUI, initUIWithScreen) as PrestoDOM
+import PrestoDOM.Core (runScreen, showScreen, initUI, initUIWithScreen) as PrestoDOM
 import PrestoDOM.Types.Core (Screen)
 
 data Authorization = RegistrationTokens RegTokens
@@ -49,7 +49,7 @@ data FlowMethodF a s
   | InitUIWithScreen (forall eff. UIFlow eff s) (s -> a)
   | InitUI (forall eff. UIFlow eff s) (s -> a)
   | RunScreen (forall eff. UIFlow eff s) (s -> a)
-  | ForkScreen (forall eff. UIFlow eff s) a
+  | ShowScreen (forall eff. UIFlow eff s) (s -> a)
 
 type FlowMethod s a = FlowMethodF a s
 newtype FlowWrapper a = FlowWrapper (Exists (FlowMethodF a))
@@ -156,9 +156,9 @@ initUIWithScreen screen = wrap $ InitUIWithScreen (makeAff (\cb -> PrestoDOM.ini
 runScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
 runScreen screen = wrap $ RunScreen (makeAff (\cb -> PrestoDOM.runScreen screen cb)) id
 
--- | Forks PrestoDOM Screen and returns control back immediately.
-forkScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow Unit
-forkScreen screen = wrap $ ForkScreen (makeAff (\cb -> PrestoDOM.runScreen screen cb)) unit
+-- | Runs PrestoDOM Screen as overlay. Overlay screens are cached for reusing.
+showScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
+showScreen screen = wrap $ ShowScreen (makeAff (\cb -> PrestoDOM.showScreen screen cb)) id
 
 -- | Awaits result from a forked flow.
 await :: forall s. Control s -> Flow s
