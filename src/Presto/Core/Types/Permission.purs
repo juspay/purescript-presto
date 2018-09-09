@@ -9,9 +9,11 @@ import Data.Tuple (Tuple)
 import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
 
 data PermissionStatus = PermissionGranted
                       | PermissionDeclined
+                      | PermissionDeclinedForever
 
 derive instance eqPermissionStatus  :: Eq PermissionStatus
 
@@ -19,6 +21,10 @@ data Permission = PermissionReadPhoneState
                 | PermissionSendSms
                 | PermissionReadStorage
                 | PermissionWriteStorage
+                | PermissionCamera
+                | PermissionLocation
+                | PermissionCoarseLocation
+                | PermissionContacts
 
 type PermissionResponse = Tuple Permission PermissionStatus
 
@@ -28,10 +34,4 @@ instance encodePermission :: Encode Permission where
 instance decodePermission :: Decode Permission where
   decode = genericDecode defaultOptions
 instance showPermissionInstance :: Show Permission where
-  show = showPermission
-
-showPermission :: Permission -> String
-showPermission PermissionReadPhoneState = "PermissionReadPhoneState"
-showPermission PermissionSendSms = "PermissionSendSms"
-showPermission PermissionReadStorage = "PermissionReadStorage"
-showPermission PermissionWriteStorage = "PermissionWriteStorage"
+  show = genericShow

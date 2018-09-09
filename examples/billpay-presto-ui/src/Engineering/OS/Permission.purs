@@ -29,6 +29,10 @@ toAndroidPermission PermissionSendSms = "android.permission.READ_SMS"
 toAndroidPermission PermissionReadPhoneState = "android.permission.READ_PHONE_STATE"
 toAndroidPermission PermissionWriteStorage = "android.permission.WRITE_EXTERNAL_STORAGE"
 toAndroidPermission PermissionReadStorage = "android.permission.READ_EXTERNAL_STORAGE"
+toAndroidPermission PermissionCamera = "android.permission.CAMERA"
+toAndroidPermission PermissionLocation = "android.permission.LOCATION"
+toAndroidPermission PermissionCoarseLocation = "android.permission.ACCESS_COARSE_LOCATION"
+toAndroidPermission PermissionContacts = "android.permission.CONTACTS"
 
 allPermissionGranted :: Array PermissionResponse -> Boolean
 allPermissionGranted = all (\(Tuple _ status) -> status == PermissionGranted)

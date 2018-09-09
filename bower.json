@@ -17,7 +17,6 @@
     "purescript-control": "^3.3.0",
     "purescript-foreign-generic": "5.0.0",
     "purescript-generics-rep": "^5.2.0",
-    "purescript-spec": "^2.0.0",
     "purescript-transformers": "^3.4.0",
     "purescript-tuples": "^4.1.0",
     "purescript-maps": "^3.5.1",
@@ -37,6 +36,6 @@
     "type": "git",
     "url": "git://github.com/juspay/purescript-presto.git"
   },
-  "version": "v0.2.3",
+  "version": "v0.3.0",
   "license": "AGPL-1.0"
 }

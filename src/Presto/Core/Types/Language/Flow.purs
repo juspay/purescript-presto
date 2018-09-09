@@ -10,7 +10,7 @@ import Data.Either (Either, either)
 import Data.Exists (Exists, mkExists)
 import Data.Foreign.Class (class Decode, class Encode)
 import Data.Maybe (Maybe)
-import Data.Time.Duration (Milliseconds)
+import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
 import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers, RegTokens)
 import Presto.Core.Types.App (AppFlow, UIFlow)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
@@ -168,9 +168,9 @@ await control = wrap $ Await control id
 await' :: forall s. Control s -> Flow Unit
 await' control = void $ wrap $ Await control id
 
--- | Delays computation for a given number of milliseconds.
-delay :: Milliseconds -> Flow Unit
-delay duration = wrap $ Delay duration unit
+-- | Delays computation for the given amount of time.
+delay :: forall d. Duration d => d -> Flow Unit
+delay duration = wrap $ Delay (fromDuration duration) unit
 
 -- | Executes a set of actions and returns when the first one is done
 oneOf :: forall s. Array (Flow s) -> Flow s
