@@ -2,15 +2,14 @@ module Test.Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Presto.Core.Types.App (AppEffects)
+import Effect (Effect)
 import Test.Language.ApiInteractionTest as ApiInteractionTest
 import Test.Language.FlowTest as FlowTest
 import Test.Language.UIInteractionTest as UIInteractionTest
 import Test.Spec.Reporter.Console (consoleReporter)
-import Test.Spec.Runner (RunnerEffects, run) as T
+import Test.Spec.Runner (run) as T
 
-main :: forall eff. Eff (T.RunnerEffects (AppEffects eff)) Unit
+main :: Effect Unit
 main = T.run [consoleReporter] do
   FlowTest.runTests
   UIInteractionTest.runTests

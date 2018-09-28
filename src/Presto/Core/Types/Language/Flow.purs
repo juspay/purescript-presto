@@ -2,16 +2,17 @@ module Presto.Core.Types.Language.Flow where
 
 import Prelude
 
-import Control.Monad.Aff.AVar (AVar)
-import Control.Monad.Eff.Exception (Error)
 import Control.Monad.Free (Free, liftF)
 import Data.Either (Either, either)
 import Data.Exists (Exists, mkExists)
-import Data.Foreign.Class (class Decode, class Encode)
 import Data.Maybe (Maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
+import Effect.Aff (Aff)
+import Effect.Aff.AVar as AV
+import Effect.Exception (Error)
+import Foreign.Class (class Decode, class Encode)
+
 import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers, RegTokens)
-import Presto.Core.Types.App (AppFlow)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
@@ -22,7 +23,7 @@ data Authorization = RegistrationTokens RegTokens
 type UIResult s = Either Error s
 type APIResult s = Either ErrorResponse s
 data Store = LocalStore | InMemoryStore
-newtype Control s = Control (AVar s)
+newtype Control s = Control (AV.AVar s)
 
 data ErrorHandler s
   = ThrowError String
@@ -36,7 +37,7 @@ data FlowMethodF a s
   | Get Store Key (Maybe String -> a)
   | Set Store Key String a
   | Fork (Flow s) (Control s -> a)
-  | DoAff (forall eff. AppFlow eff s) (s -> a)
+  | DoAff (Aff s) (s -> a)
   | Await (Control s) (s -> a)
   | Delay Milliseconds a
   | OneOf (Array (Flow s)) (s -> a)
@@ -56,7 +57,7 @@ wrap = liftF <<< FlowWrapper <<< mkExists
 
 -- | Gets some string from state by key
 getS :: Key -> Flow (Maybe String)
-getS key = wrap $ Get InMemoryStore key id
+getS key = wrap $ Get InMemoryStore key identity
 
 -- | Puts a string value into state using key.
 setS :: Key -> String -> Flow Unit
@@ -64,7 +65,7 @@ setS key val = wrap $ Set InMemoryStore key val unit
 
 -- | Gets some string from localStorage by key
 loadS :: Key -> Flow (Maybe String)
-loadS key = wrap $ Get LocalStore key id
+loadS key = wrap $ Get LocalStore key identity
 
 -- | Puts a string value into the localStorage using key.
 saveS :: Key -> String -> Flow Unit
@@ -72,7 +73,7 @@ saveS key val = wrap $ Set LocalStore key val unit
 
 -- | Converts error to string and throws at runtime or returns result.
 withError :: forall err s. (err -> String) -> Flow (Either err s) -> Flow s
-withError toMsg flow = wrap $ HandleError flow' id
+withError toMsg flow = wrap $ HandleError flow' identity
   where
     flow' = flow >>= either (pure <<< ThrowError <<< toMsg) (pure <<< ReturnResult)
 
@@ -82,13 +83,13 @@ suppress = void
 
 -- | Throws error.
 throwErr :: forall a. String -> Flow a
-throwErr msg = wrap $ HandleError flow' id
+throwErr msg = wrap $ HandleError flow' identity
   where
     flow' = pure $ ThrowError msg
 
 -- | Runs UI and returns result of user's interaction with a screen.
 runUI' :: forall a b. Interact Error a b => a -> Flow (UIResult b)
-runUI' a = wrap $ RunUI (interact a) id
+runUI' a = wrap $ RunUI (interact a) identity
 
 -- | Runs UI and returns result of user's interaction with a screen.
 -- | Handles error in runtime.
@@ -108,12 +109,12 @@ showUI = void <<< runUI
 -- | Runs UI with a custom converter
 -- | Handles error in runtime.
 evalUI :: forall a b s. Interact Error a b => a -> (b -> Either Error s) -> Flow s
-evalUI a from = withError show $ wrap $ RunUI (interactConv a from) id
+evalUI a from = withError show $ wrap $ RunUI (interactConv a from) identity
 
 -- | Call API being authorized.
 callAPI :: forall a b. Encode a => Decode b => RestEndpoint a b
   => Headers -> a -> Flow (APIResult b)
-callAPI headers a = wrap $ CallAPI (apiInteract a headers) id
+callAPI headers a = wrap $ CallAPI (apiInteract a headers) identity
 
 -- | Gets some data from state and deserializes to `s` if possible.
 get :: forall s. Serializable s => Key -> Flow (Maybe s)
@@ -127,23 +128,23 @@ set key val = setS key (serialize val)
 
 -- | Forks a flow and returns a control structure for getting results back (like Future).
 fork :: forall s. Flow s -> Flow (Control s)
-fork flow = wrap $ Fork flow id
+fork flow = wrap $ Fork flow identity
 
 -- | Forks a flow and returns a void control structure.
 launch :: Flow Unit -> Flow (Control Unit)
-launch flow = wrap $ Fork flow id
+launch flow = wrap $ Fork flow identity
 
 -- | Runs any Aff as part of the flow
-doAff :: forall s. (forall eff. AppFlow eff s) -> Flow s
-doAff aff = wrap $ DoAff aff id
+doAff :: forall s. Aff s -> Flow s
+doAff aff = wrap $ DoAff aff identity
 
 -- | Awaits result from a forked flow.
 await :: forall s. Control s -> Flow s
-await control = wrap $ Await control id
+await control = wrap $ Await control identity
 
 -- | Awaits a forked flow to be completed.
 await' :: forall s. Control s -> Flow Unit
-await' control = void $ wrap $ Await control id
+await' control = void $ wrap $ Await control identity
 
 -- | Delays computation for the given amount of time.
 delay :: forall d. Duration d => d -> Flow Unit
@@ -151,7 +152,7 @@ delay duration = wrap $ Delay (fromDuration duration) unit
 
 -- | Executes a set of actions and returns when the first one is done
 oneOf :: forall s. Array (Flow s) -> Flow s
-oneOf flows = wrap $ OneOf flows id
+oneOf flows = wrap $ OneOf flows identity
 
 -- | Gets some data from local storage and deserializes to `s` if possible.
 load :: forall s. Serializable s => Key -> Flow (Maybe s)
@@ -165,8 +166,8 @@ save key val = saveS key (serialize val)
 
 -- | Checks if permissions granted.
 checkPermissions :: Array Permission -> Flow PermissionStatus
-checkPermissions permissions = wrap $ CheckPermissions permissions id
+checkPermissions permissions = wrap $ CheckPermissions permissions identity
 
 -- | Tries to aquire permissions.
 takePermissions :: Array Permission -> Flow (Array PermissionResponse)
-takePermissions permissions = wrap $ TakePermissions permissions id
+takePermissions permissions = wrap $ TakePermissions permissions identity

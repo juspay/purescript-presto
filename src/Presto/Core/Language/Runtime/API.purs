@@ -5,19 +5,19 @@ module Presto.Core.Language.Runtime.API
 
 import Prelude
 
-import Control.Monad.Aff (Aff)
-import Control.Monad.Eff.Exception (error)
 import Control.Monad.Except (throwError, runExcept)
 import Control.Monad.Free (foldFree)
 import Data.Either (Either(..))
-import Data.Foreign.Class (encode, decode)
-import Data.NaturalTransformation (NaturalTransformation)
+import Effect.Aff (Aff)
+import Effect.Exception (error)
+import Foreign.Class (encode, decode)
+
 import Presto.Core.Types.API (Request) as API
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignIn(..), ForeignOut(..))
 
-type APIRunner = forall e. API.Request -> Aff e String
+type APIRunner = API.Request -> Aff String
 
-interpretAPI :: forall eff. APIRunner -> NaturalTransformation InteractionF (Aff eff)
+interpretAPI :: APIRunner -> InteractionF ~> Aff
 interpretAPI apiRunner (Request (ForeignIn fgnIn) nextF) = do
   case runExcept $ decode fgnIn of
     -- This error should never happen if the `apiInteract` function is made right.
@@ -27,5 +27,5 @@ interpretAPI apiRunner (Request (ForeignIn fgnIn) nextF) = do
       pure $ nextF $ ForeignOut $ encode str
 
 
-runAPIInteraction :: forall eff. APIRunner -> NaturalTransformation Interaction (Aff eff)
+runAPIInteraction :: APIRunner -> Interaction ~> Aff
 runAPIInteraction apiRunner = foldFree (interpretAPI apiRunner)

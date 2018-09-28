@@ -1,22 +1,22 @@
 module Test.Language.UIInteractionTest where
 
 import Prelude
-import Control.Monad.Eff.Exception (error, Error)
 import Control.Monad.State.Trans as S
 import Data.Map (empty)
 import Data.Either (Either(..))
-import Data.Foreign.Class (class Encode, class Decode, encode)
-import Data.Foreign.Generic (defaultOptions, genericEncode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show as GShow
 import Data.Generic.Rep.Eq as GEq
-import Test.Spec (describe, it)
+import Effect.Aff (Aff)
+import Effect.Exception (error, Error)
+import Foreign.Class (class Encode, class Decode, encode)
+import Foreign.Generic (defaultOptions, genericEncode)
+import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 
 import Presto.Core.Utils.Encoding (defaultDecode)
 import Presto.Core.Types.Language.Interaction (class Interact, defaultInteract)
 import Presto.Core.Types.Language.Flow (Flow, evalUI, runUI)
-import Test.Common (TestCase, TestFixture)
 import Test.Runtime.Interpreter (run, mkStFgn, mkStVar)
 
 data StaticQRScreen = StaticQRScreen String
@@ -48,19 +48,19 @@ qrConvertFlow = evalUI (StaticQRScreen "ABC") from
     from (StaticQRScreenAction x) = Right x
     from StaticQRScreenAbort = Left $ error "Invalid Action"
 
-uiInteractionTest :: forall eff. TestCase eff
+uiInteractionTest :: Aff Unit
 uiInteractionTest = do
   stVar <- mkStVar $ mkStFgn 0 empty (encode (StaticQRScreenAction "ABC"))
   x <- S.evalStateT (run qrFlow) stVar
   x `shouldEqual` (StaticQRScreenAction "ABC")
 
-uiInteractionWithConvertTest :: forall eff. TestCase eff
+uiInteractionWithConvertTest :: Aff Unit
 uiInteractionWithConvertTest = do
   stVar <- mkStVar $ mkStFgn 0 empty (encode (StaticQRScreenAction "ABC"))
   x <- S.evalStateT (run qrConvertFlow) stVar
   x `shouldEqual` "ABC"
 
-runTests :: forall eff. TestFixture eff
+runTests :: Spec Unit
 runTests = do
   describe "UI Interaction test" do
     it "UI Interaction test" uiInteractionTest
