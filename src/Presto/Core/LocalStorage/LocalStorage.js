@@ -3,5 +3,5 @@ exports.getValueFromLocalStoreImpl = function(key) {
 };
 
 exports.setValueToLocalStoreImpl = function(key, value) {
-  JBridge.setInSharedPrefs(key, value);
+  return JBridge.setInSharedPrefs(key, value);
 };
