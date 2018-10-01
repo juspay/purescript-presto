@@ -2,24 +2,23 @@ module Engineering.Helpers.Commons where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (Error)
+import Effect (Effect)
+import Effect.Exception (Error)
 import Control.Monad.Except.Trans (ExceptT(..))
 import Data.Either (Either(..))
 import Data.Function.Uncurried (Fn2)
 import Engineering.Types.App as App
 import Presto.Core.Flow (runUI)
 import Presto.Core.Types.API (Header(..), Headers(..), Request(..), URL)
-import Presto.Core.Types.App (UI)
 import Presto.Core.Types.Language.Interaction (class Interact)
 
-foreign import showUI' :: forall e. Fn2 (String -> Eff (ui :: UI | e) Unit) String (Eff (ui :: UI | e) Unit)
-foreign import callAPI' :: forall e. (AffError e) -> (AffSuccess String e) -> NativeRequest -> (Eff e Unit)
+foreign import showUI' :: Fn2 (String -> Effect Unit) String (Effect Unit)
+foreign import callAPI' :: AffError -> (AffSuccess String) -> NativeRequest -> (Effect Unit)
 
 type NativeHeader = { field :: String , value :: String}
 type NativeHeaders = Array NativeHeader
-type AffError e = (Error -> Eff e Unit)
-type AffSuccess s e = (s -> Eff e Unit)
+type AffError = (Error -> Effect Unit)
+type AffSuccess s = (s -> Effect Unit)
 
 
 newtype NativeRequest = NativeRequest
