@@ -1,7 +1,7 @@
 module Product.Types where
 
-import Data.Foreign.Class (class Encode)
-import Data.Foreign.Generic (defaultOptions, genericEncode)
+import Foreign.Class (class Encode)
+import Foreign.Generic (defaultOptions, genericEncode)
 import Data.Generic.Rep (class Generic)
 
 type MobileNumber = String
