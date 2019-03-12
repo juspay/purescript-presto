@@ -17,7 +17,7 @@ import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
 import Presto.Core.Types.Permission (Permission, PermissionStatus, PermissionResponse)
-import PrestoDOM.Core (runScreen, showScreen, initUI, initUIWithScreen) as PrestoDOM
+import PrestoDOM.Core (initUI, initUIWithScreen, runScreen, runScreenHMR, showScreen, showScreenHMR) as PrestoDOM
 import PrestoDOM.Types.Core (Screen)
 
 data Authorization = RegistrationTokens RegTokens
@@ -156,9 +156,17 @@ initUIWithScreen screen = wrap $ InitUIWithScreen (makeAff (\cb -> PrestoDOM.ini
 runScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
 runScreen screen = wrap $ RunScreen (makeAff (\cb -> PrestoDOM.runScreen screen cb)) id
 
+-- | Same as the runScreen, but enables HMR for this screen only if valid screen module name is passed
+runScreenHMR :: forall action state s. String -> (forall eff. Screen action state eff s) -> Flow s
+runScreenHMR screenModuleName screen = wrap $ RunScreen (makeAff (\cb -> PrestoDOM.runScreenHMR screenModuleName screen cb)) id
+
 -- | Runs PrestoDOM Screen as overlay. Overlay screens are cached for reusing.
 showScreen :: forall action state s. (forall eff. Screen action state eff s) -> Flow s
 showScreen screen = wrap $ ShowScreen (makeAff (\cb -> PrestoDOM.showScreen screen cb)) id
+
+-- | Same as the showScreen, but enables HMR for the screen only if valid screen module name is passed
+showScreenHMR :: forall action state s. String -> (forall eff. Screen action state eff s) -> Flow s
+showScreenHMR screenModuleName screen = wrap $ ShowScreen (makeAff (\cb -> PrestoDOM.showScreenHMR screenModuleName screen cb)) id
 
 -- | Awaits result from a forked flow.
 await :: forall s. Control s -> Flow s
