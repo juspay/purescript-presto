@@ -117,6 +117,14 @@ interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
 interpret _ (DoAff aff nextF) = lift aff >>= (pure <<< nextF)
 
+interpret _ (InitUIWithScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (InitUI uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (RunScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (ShowScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
 interpret _ (Await (Control resultVar) nextF) = do
   lift (AV.read resultVar) >>= (pure <<< nextF)
 

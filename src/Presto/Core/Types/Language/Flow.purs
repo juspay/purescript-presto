@@ -7,7 +7,7 @@ import Data.Either (Either, either)
 import Data.Exists (Exists, mkExists)
 import Data.Maybe (Maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
-import Effect.Aff (Aff)
+import Effect.Aff (Aff, makeAff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
 import Foreign.Class (class Decode, class Encode)
@@ -17,6 +17,10 @@ import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
 import Presto.Core.Types.Permission (Permission, PermissionStatus, PermissionResponse)
+
+import PrestoDOM.Core (runScreen, showScreen, initUI, initUIWithScreen) as PrestoDOM
+import PrestoDOM.Types.Core (Screen)
+
 
 data Authorization = RegistrationTokens RegTokens
 
@@ -45,6 +49,10 @@ data FlowMethodF a s
   | HandleError (Flow (ErrorHandler s)) (s -> a)
   | CheckPermissions (Array Permission) (PermissionStatus -> a)
   | TakePermissions (Array Permission) (Array PermissionResponse -> a)
+  | InitUIWithScreen (Aff s) (s -> a)
+  | InitUI (Aff s) (s -> a)
+  | RunScreen (Aff s) (s -> a)
+  | ShowScreen (Aff s) (s -> a)
 
 type FlowMethod s a = FlowMethodF a s
 newtype FlowWrapper a = FlowWrapper (Exists (FlowMethodF a))
@@ -142,6 +150,23 @@ launch flow = wrap $ Fork flow identity
 -- | Runs any Aff as part of the flow
 doAff :: forall s. Aff s -> Flow s
 doAff aff = wrap $ DoAff aff identity
+
+-- | Initialize all states and machines required by PrestoDOM. Returns control back immediately.
+initUI :: Flow Unit
+initUI = wrap $ InitUI (makeAff (\cb -> PrestoDOM.initUI cb)) identity
+
+-- | Initialize all states and machines required by PrestoDOM. Takes a PrestoDOM Screen and returns control back immediately.
+initUIWithScreen :: forall action state. (Screen action state Unit) -> Flow Unit
+initUIWithScreen screen = wrap $ InitUIWithScreen (makeAff (\cb -> PrestoDOM.initUIWithScreen screen cb)) identity
+
+-- | Runs PrestoDOM Screen and returns the result. In this case, the whole screen is rerendered.
+runScreen :: forall action state s. (Screen action state s) -> Flow s
+runScreen screen = wrap $ RunScreen (makeAff (\cb -> PrestoDOM.runScreen screen cb)) identity
+
+-- | Runs PrestoDOM Screen as overlay. Overlay screens are cached for reusing.
+showScreen :: forall action state s. (Screen action state s) -> Flow s
+showScreen screen = wrap $ ShowScreen (makeAff (\cb -> PrestoDOM.showScreen screen cb)) identity
+
 
 -- | Awaits result from a forked flow.
 await :: forall s. Control s -> Flow s
