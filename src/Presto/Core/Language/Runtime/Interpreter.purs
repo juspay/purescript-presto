@@ -26,7 +26,7 @@ import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)
 
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
-import Presto.Core.LocalStorage (getValueFromLocalStore, setValueToLocalStore)
+import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Language.Storage (Key)
@@ -104,6 +104,14 @@ interpret _ (Set LocalStore key value next) = do
 
 interpret _ (Set InMemoryStore key value next) = do
   updateState key value *> pure next
+
+interpret _ (Delete LocalStore key next) = do
+  lift $ deleteValueFromLocalStore key
+  pure next
+
+interpret _ (Delete InMemoryStore key next) = do
+  _ <- Object.delete key <$> readState
+  pure next
 
 interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
