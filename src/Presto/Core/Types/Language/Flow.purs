@@ -40,6 +40,7 @@ data FlowMethodF a s
   | CallAPI (Interaction (APIResult s)) (APIResult s -> a)
   | Get Store Key (Maybe String -> a)
   | Set Store Key String a
+  | Delete Store Key a
   | Fork (Flow s) (Control s -> a)
   | DoAff (Aff s) (s -> a)
   | Await (Control s) (s -> a)
@@ -70,6 +71,10 @@ getS key = wrap $ Get InMemoryStore key identity
 -- | Puts a string value into state using key.
 setS :: Key -> String -> Flow Unit
 setS key val = wrap $ Set InMemoryStore key val unit
+
+-- | Deletes a string value from sharedprefs using key.
+delete :: Key -> Flow Unit
+delete key = wrap $ Delete LocalStore key unit
 
 -- | Gets some string from localStorage by key
 loadS :: Key -> Flow (Maybe String)
