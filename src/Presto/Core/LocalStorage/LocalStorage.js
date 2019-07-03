@@ -5,3 +5,7 @@ exports.getValueFromLocalStoreImpl = function(key) {
 exports.setValueToLocalStoreImpl = function(key, value) {
   return JBridge.setInSharedPrefs(key, value);
 };
+
+exports.deleteValueFromLocalStoreImpl = function(key){
+  JBridge.removeDataFromSharedPrefs(key);
+};
