@@ -26,7 +26,7 @@ import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)
 
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
-import Presto.Core.LocalStorage (getValueFromLocalStore, setValueToLocalStore, deleteValueFromLocalStore)
+import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Language.Storage (Key)
