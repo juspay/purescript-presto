@@ -22,10 +22,10 @@ module Presto.Core.Types.API
 import Prelude
 
 import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
 import Foreign (F)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
-
 import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
 
 class RestEndpoint a b | a -> b, b -> a where
@@ -64,7 +64,7 @@ newtype Headers = Headers (Array Header)
 
 type URL = String
 
-data Method = POST | GET | PUT | DELETE
+data Method = POST | GET | PUT | DELETE | HEAD
 data GetReqBody = GetReqBody
 
 newtype Request = Request
@@ -97,10 +97,7 @@ instance encodeMethod :: Encode Method where
 instance decodeMethod :: Decode Method where
   decode = defaultDecode
 instance showMethod :: Show Method where
-  show POST = "POST"
-  show GET = "GET"
-  show PUT = "PUT"
-  show DELETE = "DELETE"
+  show = genericShow
 
 derive instance genericHeader :: Generic Header _
 instance encodeHeaderG :: Encode Header where
