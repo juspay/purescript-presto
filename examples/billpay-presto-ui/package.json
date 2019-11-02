@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "any-base": "^1.0.1",
-    "axios": "^0.16.2",
+    "axios": "^0.19.0",
     "es6-promise": "^4.1.0",
     "immu": "^3.0.0",
     "presto-ui": "^0.3.8",
