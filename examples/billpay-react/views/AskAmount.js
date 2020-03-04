@@ -49,7 +49,7 @@ class AskAmount extends Component {
             <Header name="Enter Amount"/>
           </div>
           <div className = {styles.body}>
-            <h4>Enter your Mobile Number</h4>
+            <h4>Enter your Amount</h4>
             <div className={styles.rows}>
               <div className = {styles.operator}>
                 <img className = {styles.image} 

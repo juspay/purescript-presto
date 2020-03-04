@@ -2,26 +2,24 @@ module Core where
 
 import Prelude
 
-import Control.Monad.Aff (Aff, launchAff_, makeAff, nonCanceler)
-import Control.Monad.Aff.AVar (makeVar)
-import Control.Monad.Eff (Eff)
+import Effect.Aff (Aff, launchAff_, makeAff, nonCanceler)
+import Effect.Aff.AVar (new)
+import Effect (Effect)
 import Control.Monad.Except.Trans (runExceptT)
 import Control.Monad.State.Trans as S
 import Data.Either (Either(..))
 import Data.Function.Uncurried (runFn2)
-import Data.StrMap (empty)
+import Foreign.Object (empty)
 import Engineering.Helpers.Commons (callAPI', mkNativeRequest, showUI')
-import Engineering.Types.App (AppEffects)
 import Presto.Core.Flow (APIRunner, Flow, PermissionRunner(..), Runtime(..), UIRunner, run)
-import Presto.Core.Types.App (STORAGE)
 import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionStatus(..))
 import Product.BillPay (billPayFlow)
 
-launchApp :: Eff (AppEffects) Unit
+launchApp :: Effect Unit
 launchApp = do
   let runtime = Runtime uiRunner permissionRunner apiRunner
   let freeFlow = S.evalStateT (run runtime mainFlow)
-  launchAff_ (makeVar empty >>= freeFlow)
+  launchAff_ (new empty >>= freeFlow)
   where
     uiRunner :: UIRunner
     uiRunner a = makeAff (\callback -> runFn2 showUI' (Right >>> callback) a *> pure nonCanceler)
@@ -40,8 +38,8 @@ mainFlow = do
     Right a -> pure unit
     Left a -> mainFlow
 
-defaultPermissionStatus :: forall e. Array Permission -> Aff (storage :: STORAGE | e) PermissionStatus
+defaultPermissionStatus :: Array Permission -> Aff PermissionStatus
 defaultPermissionStatus permissions = makeAff (\callback -> (Right >>> callback) PermissionGranted *> pure nonCanceler)
 
-defaultPermissionRequest :: forall e. Array Permission -> Aff (storage :: STORAGE | e) (Array PermissionResponse)
+defaultPermissionRequest :: Array Permission -> Aff (Array PermissionResponse)
 defaultPermissionRequest permissions = makeAff (\callback -> (Right >>> callback) [] *> pure nonCanceler)

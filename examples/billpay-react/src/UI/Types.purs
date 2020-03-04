@@ -1,9 +1,9 @@
 
 module UI.Types where
 
-import Control.Monad.Eff.Exception (Error)
-import Data.Foreign.Class (class Decode, class Encode)
-import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
+import Effect.Exception (Error)
+import Foreign.Class (class Decode, class Encode)
+import Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Generic.Rep (class Generic)
 import Presto.Core.Flow (class Interact, defaultInteract)
 import Product.Types (Operator,MobileNumber,Amount,BillPayStatus)

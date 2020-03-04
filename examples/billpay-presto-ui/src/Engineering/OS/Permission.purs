@@ -2,27 +2,25 @@ module Engineering.OS.Permission where
 
 import Prelude
 
-import Control.Monad.Aff (Aff, makeAff, nonCanceler)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (Error, error)
 import Control.Monad.Except (runExcept, throwError)
-import Control.Monad.Loops (allM)
-import Data.Array (zip)
+import Data.Array (zip, foldl)
 import Data.Either (Either(..))
 import Data.Foldable (all)
-import Data.Foreign.Generic (decodeJSON)
 import Data.Function.Uncurried (Fn3, runFn3)
-import Data.List (fromFoldable)
+import Data.Traversable (sequence)
 import Data.Tuple (Tuple(..))
-import Presto.Core.Types.App (STORAGE)
+import Effect (Effect)
+import Effect.Aff (Aff, makeAff, nonCanceler)
+import Effect.Exception (Error, error)
+import Foreign.Generic (decodeJSON)
 import Presto.Core.Types.Language.Flow (Flow, checkPermissions, takePermissions)
 import Presto.Core.Types.Permission (Permission(..), PermissionResponse, PermissionStatus(..))
 
-foreign import getPermissionStatus' :: forall e. Fn3 (Error -> EffStorage e Unit) (String -> EffStorage e Unit) String (EffStorage e Unit)
-foreign import requestPermission' :: forall e. Fn3 (Error -> EffStorage e Unit) (String -> EffStorage e Unit) String (EffStorage e Unit)
+foreign import getPermissionStatus' :: Fn3 (Error -> EffStorage Unit) (String -> EffStorage Unit) String (EffStorage Unit)
+foreign import requestPermission' :: Fn3 (Error -> EffStorage Unit) (String -> EffStorage Unit) String (EffStorage Unit)
 
-type EffStorage e = Eff (storage :: STORAGE | e)
-type AffStorage e = Aff (storage :: STORAGE | e)
+type EffStorage = Effect
+type AffStorage = Aff
 
 toAndroidPermission :: Permission -> String
 toAndroidPermission PermissionSendSms = "android.permission.READ_SMS"
@@ -57,7 +55,7 @@ storagePermissionGranted = do
 	 	PermissionGranted -> pure true
 		_ -> pure false
 
-getPermissionStatus :: forall e. Permission -> AffStorage e Boolean
+getPermissionStatus :: Permission -> AffStorage Boolean
 getPermissionStatus permission = do
   permissionStr <- makeAff (\callback -> do
     runFn3 getPermissionStatus' (Left >>> callback) (Right >>> callback) (toAndroidPermission permission)
@@ -66,14 +64,15 @@ getPermissionStatus permission = do
     Right x -> pure x
     Left err -> throwError (error (show err))
 
-checkIfPermissionsGranted :: forall e. Array Permission -> AffStorage e PermissionStatus
+checkIfPermissionsGranted :: Array Permission -> AffStorage PermissionStatus
 checkIfPermissionsGranted permissions = do
-  check <- allM getPermissionStatus $ fromFoldable permissions
-  pure $ if check
+  pStatus <- sequence $ getPermissionStatus <$> permissions
+  let res = foldl (\acc x -> if acc == false then false else x) true pStatus
+  pure $ if res
     then PermissionGranted
     else PermissionDeclined
 
-requestPermissions :: forall e. Array Permission -> AffStorage e (Array PermissionResponse)
+requestPermissions :: Array Permission -> AffStorage (Array PermissionResponse)
 requestPermissions permissions = do
   response <- makeAff (\callback -> do
     runFn3 requestPermission' (Left >>> callback) (Right >>> callback) $ show jPermission
