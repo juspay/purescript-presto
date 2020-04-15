@@ -1,3 +1,6 @@
 /bower_components/
 /.pulp-cache/
 /output/
+.spago/
+.purs-repl
+node_modules/

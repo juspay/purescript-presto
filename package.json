@@ -1,0 +1,28 @@
+{
+  "name": "purescript-presto",
+  "version": "1.0.0",
+  "description": "Write apps like equations!",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juspay/purescript-presto.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juspay/purescript-presto/issues"
+  },
+  "homepage": "https://github.com/juspay/purescript-presto#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "purescript": "^0.13.6",
+    "spago": "^0.14.0"
+  }
+}

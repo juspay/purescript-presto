@@ -11,10 +11,9 @@ import Prelude
 
 import Data.Generic.Rep (class Generic)
 import Foreign (Foreign, F)
-import Foreign.Generic (defaultOptions, genericDecode, genericDecodeJSON, genericEncode, genericEncodeJSON)
+import Foreign.Generic (defaultOptions, genericDecode, genericDecodeJSON, genericEncode, genericEncodeJSON, Options)
 import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
 import Foreign.Generic.EnumEncoding (class GenericDecodeEnum, class GenericEncodeEnum, genericDecodeEnum, genericEncodeEnum)
-import Foreign.Generic.Types (Options)
 
 
 options :: Options
