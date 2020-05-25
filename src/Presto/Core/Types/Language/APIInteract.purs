@@ -8,8 +8,9 @@ import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
 import Foreign (Foreign)
 import Foreign.Class (class Decode, class Encode, decode, encode)
-import Presto.Core.Types.API (class RestEndpoint, ErrorPayload(..), ErrorResponse, Response(..), Headers, decodeResponse, makeRequest)
+
 import Presto.Core.Types.Language.Interaction (Interaction, request)
+import Presto.Core.Types.API (class RestEndpoint, ErrorPayload(..), ErrorResponse, Response(..), Headers, decodeResponse, makeRequest)
 import Presto.Core.Utils.Encoding (defaultDecodeJSON)
 
 

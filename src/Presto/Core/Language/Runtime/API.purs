@@ -24,8 +24,6 @@ interpretAPI apiRunner r@(Request (ForeignIn fgnIn) nextF) = do
     -- This error should never happen if the `apiInteract` function is made right.
     Left err -> throwError (error ("apiInteract is broken: " <> show err))
     Right req -> do
-    -- trackApiCall :: Subcategory -> Level -> Label -> Int -> Int -> Int -> String -> String -> String -> String -> Effect Unit
-    -- sub level label startTime endTime statusC response url payload
       str <- apiRunner req
       pure $ nextF $ ForeignOut $ encode str
 

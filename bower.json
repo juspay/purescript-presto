@@ -24,7 +24,6 @@
     "purescript-transformers": "^4.1.0",
     "purescript-record": "^1.0.0",
     "purescript-typelevel-prelude": "^3.0.0",
-    "purescript-tracker": "https://bitbucket.org/juspay/purescript-tracker.git#structureupdate",
     "purescript-tuples": "^5.0.0"
   },
   "devDependencies": {
