@@ -12,7 +12,6 @@ import Presto.Core.Types.Language.Interaction (Interaction, request)
 import Presto.Core.Types.API (class RestEndpoint, ErrorPayload(..), ErrorResponse, Response(..), Headers, decodeResponse, makeRequest)
 import Presto.Core.Utils.Encoding (defaultDecodeJSON)
 
-
 foreign import _trackException :: String -> String -> String -> String -> String -> String -> Effect Unit
 
 -- Special interact function for API.
