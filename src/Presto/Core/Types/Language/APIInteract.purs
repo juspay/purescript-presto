@@ -6,7 +6,6 @@ import Prelude
 
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
-import Foreign (Foreign)
 import Foreign.Class (class Decode, class Encode, decode, encode)
 
 import Presto.Core.Types.Language.Interaction (Interaction, request)
@@ -24,10 +23,8 @@ apiInteract a headers = do
   fgnOut <- request (encode (makeRequest a headers))
   pure $ case runExcept (decode fgnOut >>= decodeResponse) of
     -- Try to decode the server's resopnse into the expected type
-    Right resp -> do
-      Right resp
-    Left x -> do
-      Left $ case runExcept (decode fgnOut >>= defaultDecodeJSON) of
+    Right resp -> Right resp
+    Left x -> Left $ case runExcept (decode fgnOut >>= defaultDecodeJSON) of
                        -- See if the server sent an error response, else create our own
                        Right e@(Response _) -> do
                         _ <- getTracker._trackException("api_call")("sdk")("Error")("decode_error")(show e)

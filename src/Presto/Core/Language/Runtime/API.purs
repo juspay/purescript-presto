@@ -18,8 +18,7 @@ import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, Fo
 type APIRunner = API.Request -> Aff String
 
 interpretAPI :: APIRunner -> InteractionF ~> Aff
-interpretAPI apiRunner r@(Request (ForeignIn fgnIn) nextF) = do
-  startTime <- getTime
+interpretAPI apiRunner (Request (ForeignIn fgnIn) nextF) = do
   case runExcept $ decode fgnIn of
     -- This error should never happen if the `apiInteract` function is made right.
     Left err -> throwError (error ("apiInteract is broken: " <> show err))
