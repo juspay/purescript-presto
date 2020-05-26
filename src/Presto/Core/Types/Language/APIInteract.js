@@ -4,8 +4,8 @@ const loopedFunction = function(){
 }
 const getTracker = function(){
     var trackerJson = JOS.tracker || {};
-    if (typeof trackerJson.trackException != "function"){
-        trackerJson.trackException = loopedFunction;
+    if (typeof trackerJson._trackException != "function"){
+        trackerJson._trackException = loopedFunction;
     }
     return trackerJson;
 }
