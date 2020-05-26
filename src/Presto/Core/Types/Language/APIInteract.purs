@@ -26,10 +26,10 @@ apiInteract a headers = do
     Left x -> Left $ case runExcept (decode fgnOut >>= defaultDecodeJSON) of
                        -- See if the server sent an error response, else create our own
                        Right e@(Response _) -> do
-                        _ <- getTracker._trackException("api_call")("sdk")("Error")("decode_error")(show e)
+                        _ <- _trackException "api_call" "sdk" "Error" "decode_error" "user_errors" $ show e
                         e
                        Left y -> do
-                        _ <- getTracker._trackException("api_call")("sdk")("Error")("decode_error")("Unknown error")
+                        _ <- _trackException "api_call" "sdk" "Error" "decode_error" "user_errors" "Unknown error"
                         Response
                                     { code : 0
                                     , status : ""
