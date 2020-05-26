@@ -11,4 +11,16 @@ const getTracker = function(){
 }
 const tracker = getTracker();
 
-exports._trackException = tracker._trackException
+exports._trackException = function(category){
+    return function(subcategory){
+        return function(level){
+            return function(label){
+                return function(key){
+                    return function(value) {
+                        tracker._trackException(category)(subcategory)(level)(label)(key)(value)();
+                    }
+                }
+            }
+        }
+    }
+}
