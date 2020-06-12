@@ -22,7 +22,7 @@ data Authorization = RegistrationTokens RegTokens
 
 type UIResult s = Either Error s
 type APIResult s = Either ErrorResponse s
-data Store = LocalStore | InMemoryStore
+data Store = LocalStore -- | InMemoryStore
 newtype Control s = Control (AV.AVar s)
 
 data ErrorHandler s
@@ -56,13 +56,13 @@ type Flow a = Free FlowWrapper a
 wrap :: forall a s. FlowMethodF a s -> Flow a
 wrap = liftF <<< FlowWrapper <<< mkExists
 
--- | Gets some string from state by key
-getS :: Key -> Flow (Maybe String)
-getS key = wrap $ Get InMemoryStore key identity
+{---- | Gets some string from state by key--}
+{--getS :: Key -> Flow (Maybe String)--}
+{--getS key = wrap $ Get InMemoryStore key identity--}
 
--- | Puts a string value into state using key.
-setS :: Key -> String -> Flow Unit
-setS key val = wrap $ Set InMemoryStore key val unit
+{---- | Puts a string value into state using key.--}
+{--setS :: Key -> String -> Flow Unit--}
+{--setS key val = wrap $ Set InMemoryStore key val unit--}
 
 -- | Deletes a string value from sharedprefs using key.
 delete :: Key -> Flow Unit
@@ -122,14 +122,14 @@ callAPI :: forall a b. Encode a => Decode b => RestEndpoint a b
 callAPI headers a = wrap $ CallAPI (apiInteract a headers) identity
 
 -- | Gets some data from state and deserializes to `s` if possible.
-get :: forall s. Serializable s => Key -> Flow (Maybe s)
-get key = do
-  res <- getS key
-  pure $ res >>= deserialize
+{--get :: forall s. Serializable s => Key -> Flow (Maybe s)--}
+{--get key = do--}
+  {--res <- getS key--}
+  {--pure $ res >>= deserialize--}
 
 -- | Serializes a value and puts it into the state.
-set :: forall s. Serializable s => Key -> s -> Flow Unit
-set key val = setS key (serialize val)
+{--set :: forall s. Serializable s => Key -> s -> Flow Unit--}
+{--set key val = setS key (serialize val)--}
 
 -- | Forks a flow and returns a control structure for getting results back (like Future).
 fork :: forall s. Flow s -> Flow (Control s)

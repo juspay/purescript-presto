@@ -45,7 +45,6 @@ data PermissionRunner = PermissionRunner PermissionCheckRunner PermissionTakeRun
 
 data Runtime a = Runtime UIRunner PermissionRunner APIRunner
 
-
 {--readState :: InterpreterSt (Object.Object String)--}
 {--readState = S.get >>= (lift <<< AV.read)--}
 
@@ -94,25 +93,25 @@ interpret (Runtime uiRunner _ _) (ForkUI uiInteraction next) = do
 
 interpret _ (Get LocalStore key next) = lift $ getValueFromLocalStore key >>= (pure <<< next)
 
-interpret _ (Get InMemoryStore key next) = do
-  unsafeCoerce unit
+{--interpret _ (Get InMemoryStore key next) = do--}
+  {--unsafeCoerce unit--}
   {--readState >>= (Object.lookup key >>> next >>> pure)--}
 
 interpret _ (Set LocalStore key value next) = do
   lift $ setValueToLocalStore key value
   pure next
 
-interpret _ (Set InMemoryStore key value next) = do
-  unsafeCoerce unit
+{--interpret _ (Set InMemoryStore key value next) = do--}
+  {--unsafeCoerce unit--}
   {--updateState key value *> pure next--}
 
 interpret _ (Delete LocalStore key next) = do
   lift $ deleteValueFromLocalStore key
   pure next
 
-interpret _ (Delete InMemoryStore key next) = do
-  {--_ <- Object.delete key <$> readState--}
-  pure next
+{--interpret _ (Delete InMemoryStore key next) = do--}
+  {--[>_ <- Object.delete key <$> readState<]--}
+  {--pure next--}
 
 interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
@@ -132,8 +131,7 @@ interpret rt (OneOf flows nextF) = do
     parFlow st flow = S.runStateT (run rt flow) st
 
 interpret rt (HandleError flow nextF) =
-  unsafeCoerce unit
-  {--run rt flow >>= runErrorHandler >>= (pure <<< nextF)--}
+  run rt flow >>= runErrorHandler >>= (pure <<< nextF)
 
 interpret (Runtime _ (PermissionRunner check _) _) (CheckPermissions permissions nextF) = do
   lift $ check permissions >>= (pure <<< nextF)
