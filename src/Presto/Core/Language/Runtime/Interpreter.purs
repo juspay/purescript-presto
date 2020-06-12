@@ -29,7 +29,6 @@ import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalSto
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionStatus)
-import Unsafe.Coerce (unsafeCoerce)
 
 type AffError = (Error -> Effect Unit)
 type AffSuccess s = (s -> Effect Unit)
@@ -116,6 +115,14 @@ interpret _ (Delete LocalStore key next) = do
 interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
 interpret _ (DoAff aff nextF) = lift aff >>= (pure <<< nextF)
+
+interpret _ (InitUIWithScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (InitUI uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (RunScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
+
+interpret _ (ShowScreen uiFlow nextF) = lift uiFlow >>= (pure <<< nextF)
 
 interpret _ (Await (Control resultVar) nextF) = do
   lift (AV.read resultVar) >>= (pure <<< nextF)
