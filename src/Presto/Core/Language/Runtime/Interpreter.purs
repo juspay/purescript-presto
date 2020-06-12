@@ -22,7 +22,6 @@ import Effect.Aff (Aff, forkAff, delay)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error, error)
 import Foreign.JSON (parseJSON)
-import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
 import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalStore, setValueToLocalStore)
@@ -33,7 +32,7 @@ import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionS
 type AffError = (Error -> Effect Unit)
 type AffSuccess s = (s -> Effect Unit)
 
-type St = AV.AVar (Object.Object String)
+{--type St = AV.AVar (Object.Object String)--}
 type InterpreterSt st a = S.StateT st Aff a
 
 type UIRunner = String -> Aff String
@@ -42,7 +41,7 @@ type PermissionCheckRunner = Array Permission -> Aff PermissionStatus
 type PermissionTakeRunner = Array Permission -> Aff (Array PermissionResponse)
 data PermissionRunner = PermissionRunner PermissionCheckRunner PermissionTakeRunner
 
-data Runtime a = Runtime UIRunner PermissionRunner APIRunner
+data Runtime = Runtime UIRunner PermissionRunner APIRunner
 
 {--readState :: InterpreterSt (Object.Object String)--}
 {--readState = S.get >>= (lift <<< AV.read)--}
@@ -65,7 +64,7 @@ runUIInteraction :: UIRunner -> Interaction ~> Aff
 runUIInteraction uiRunner = foldFree (interpretUI uiRunner)
 
 -- TODO: canceller support
-forkFlow :: forall a e. Runtime e -> Flow a -> InterpreterSt e (Control a)
+forkFlow :: forall a e. Runtime -> Flow e a -> InterpreterSt e (Control a)
 forkFlow rt flow = do
   st <- S.get
   resultVar <- lift AV.empty
@@ -77,7 +76,7 @@ runErrorHandler :: forall st s. ErrorHandler s -> InterpreterSt st s
 runErrorHandler (ThrowError msg) = throwError $ error msg
 runErrorHandler (ReturnResult res) = pure res
 
-interpret :: forall s e. Runtime e -> FlowMethod s ~> InterpreterSt e
+interpret :: forall s e. Runtime -> FlowMethod e s ~> InterpreterSt e
 interpret (Runtime _ _ apiRunner) (CallAPI apiInteractionF nextF) = do
   lift $ runAPIInteraction apiRunner apiInteractionF
     >>= (pure <<< nextF)
@@ -92,25 +91,23 @@ interpret (Runtime uiRunner _ _) (ForkUI uiInteraction next) = do
 
 interpret _ (Get LocalStore key next) = lift $ getValueFromLocalStore key >>= (pure <<< next)
 
-{--interpret _ (Get InMemoryStore key next) = do--}
-  {--unsafeCoerce unit--}
-  {--readState >>= (Object.lookup key >>> next >>> pure)--}
+interpret _ (GetState next) = do
+  S.get >>= (next >>> pure)
 
 interpret _ (Set LocalStore key value next) = do
   lift $ setValueToLocalStore key value
   pure next
 
-{--interpret _ (Set InMemoryStore key value next) = do--}
-  {--unsafeCoerce unit--}
-  {--updateState key value *> pure next--}
+interpret _ (SetState value next) = do
+  S.put value *> pure (next unit)
 
 interpret _ (Delete LocalStore key next) = do
   lift $ deleteValueFromLocalStore key
   pure next
 
-{--interpret _ (Delete InMemoryStore key next) = do--}
-  {--[>_ <- Object.delete key <$> readState<]--}
-  {--pure next--}
+interpret _ (ModifyState fn next) = do
+  x ← S.modify fn
+  pure $ next x
 
 interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
@@ -146,5 +143,5 @@ interpret (Runtime _ (PermissionRunner check _) _) (CheckPermissions permissions
 interpret (Runtime _ (PermissionRunner _ take) _) (TakePermissions permissions nextF) = do
   lift $ take permissions >>= (pure <<< nextF)
 
-run :: forall st. Runtime st -> Flow ~> InterpreterSt st
+run :: forall st. Runtime -> Flow st ~> InterpreterSt st
 run runtime = foldFree (\(FlowWrapper x) -> runExists (interpret runtime) x)
