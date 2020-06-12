@@ -18,7 +18,7 @@
     "purescript-exceptions": "^4.0.0",
     "purescript-exists": "^4.0.0",
     "purescript-free": "^5.0.0",
-    "purescript-foreign-generic": "^7.0.0",
+    "purescript-foreign-generic": "^10.0.0",
     "purescript-foreign-object": "^1.0.0",
     "purescript-generics-rep": "^6.0.0",
     "purescript-transformers": "^4.1.0",
@@ -41,5 +41,10 @@
     "url": "git://github.com/juspay/purescript-presto.git"
   },
   "version": "v0.4.0",
-  "license": "AGPL-1.0"
+  "license": "AGPL-1.0",
+  "resolutions": {
+    "purescript-foreign-object": "^2.0.0",
+    "purescript-typelevel-prelude": ">= 4.0.0 < 6.0.0",
+    "purescript-record": "^2.0.0"
+  }
 }
