@@ -11,7 +11,7 @@ import Presto.Core.Types.Language.Interaction (Interaction, request)
 import Presto.Core.Types.API (class RestEndpoint, ErrorPayload(..), ErrorResponse, Response(..), Headers, decodeResponse, makeRequest)
 import Presto.Core.Utils.Encoding (defaultDecodeJSON)
 
-foreign import _trackException :: String -> String -> String -> String -> String -> String -> Unit
+foreign import _trackException :: String -> String -> String -> String -> String -> Unit
 
 -- Special interact function for API.
 apiInteract :: forall a b.
@@ -25,10 +25,10 @@ apiInteract a headers = do
     Left x -> Left $ case runExcept (decode fgnOut >>= defaultDecodeJSON) of
                        -- See if the server sent an error response, else create our own
                        Right e@(Response _) -> do
-                        let _ = _trackException "api_call" "sdk" "Error" "decode_error" "user_errors" $ show e
+                        let _ = _trackException "api_call" "sdk" "decode_error" "user_errors" $ show e
                         e
                        Left y -> do
-                        let _ = _trackException "api_call" "sdk" "Error" "decode_error" "user_errors" "Unknown error"
+                        let _ = _trackException "api_call" "sdk" "decode_error" "user_errors" "Unknown error"
                         Response
                                     { code : 0
                                     , status : ""
