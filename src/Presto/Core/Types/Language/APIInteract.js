@@ -3,7 +3,7 @@ const loopedFunction = function(){
     return loopedFunction
 }
 const getTracker = function(){
-    var trackerJson = JOS.tracker || {};
+    var trackerJson = window.JOS && window.JOS.tracker || {};
     if (typeof trackerJson._trackException != "function"){
         trackerJson._trackException = loopedFunction;
     }
@@ -13,14 +13,12 @@ const tracker = getTracker();
 
 exports._trackException = function(category){
     return function(subcategory){
-        return function(level){
             return function(label){
                 return function(key){
                     return function(value) {
-                        tracker._trackException(category)(subcategory)(level)(label)(key)(value)();
+                        tracker._trackException(category)(subcategory)(label)(key)(value)();
                     }
                 }
             }
-        }
     }
 }
