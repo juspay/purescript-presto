@@ -25,7 +25,7 @@
     "purescript-record": "^1.0.0",
     "purescript-typelevel-prelude": "^3.0.0",
     "purescript-tuples": "^5.0.0",
-    "purescript-presto-dom": "https://bitbucket.org/juspay/purescript-presto-dom.git#compiler/0.12"
+    "purescript-presto-dom": "git@bitbucket.org:juspay/purescript-presto-dom.git#compiler/0.12"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0",
