@@ -1,7 +1,5 @@
 module Presto.Core.Types.API
   ( class RestEndpoint
-  , ErrorPayload(..)
-  , ErrorResponse
   , Method(..)
   , Header(..)
   , HeaderField
@@ -10,6 +8,8 @@ module Presto.Core.Types.API
   , RegTokens(..)
   , Request(..)
   , Response(..)
+  , ErrorResponse
+  , ErrorPayload
   , URL
   , defaultMakeRequest
   , defaultMakeRequest_
@@ -25,7 +25,7 @@ import Data.Generic.Rep (class Generic)
 import Foreign (F)
 import Foreign.Class (class Decode, class Encode)
 import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
-
+import Foreign.Object (Object)
 import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
 
 class RestEndpoint a b | a -> b, b -> a where
@@ -74,22 +74,22 @@ newtype Request = Request
   , headers :: Headers
   }
 
+type ErrorResponse = Response ErrorPayload
+
+type ErrorPayload = { error :: Boolean
+                    , errorMessage :: String
+                    , userMessage :: String
+                    }
+
 newtype Response a = Response
   { code :: Int
   , status :: String
   , response :: a
+  , responseHeaders :: Object (Array String)
   }
 
 responsePayload :: forall a. Response a -> a
 responsePayload (Response r) = r.response
-
-newtype ErrorPayload = ErrorPayload
-  { error :: Boolean
-  , errorMessage :: String
-  , userMessage :: String
-  }
-
-type ErrorResponse = Response ErrorPayload
 
 derive instance genericMethod :: Generic Method _
 instance encodeMethod :: Encode Method where
@@ -119,14 +119,6 @@ instance encodeRequestG :: Encode Request where
   encode = defaultEncode
 instance decodeRequestG :: Decode Request where
   decode = defaultDecode
-  
-derive instance genericErrorPayload :: Generic ErrorPayload _
-instance encodeErrorPayload :: Encode ErrorPayload where
-  encode = defaultEncode
-instance decodeErrorPayload :: Decode ErrorPayload where
-  decode = defaultDecode
-instance showErrorPayload :: Show ErrorPayload where
-  show (ErrorPayload payload) = payload.userMessage
 
 derive instance genericResponse :: Generic (Response a) _
 instance decodeResponseG :: Decode a => Decode (Response a) where
