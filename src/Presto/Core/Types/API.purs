@@ -17,28 +17,46 @@ module Presto.Core.Types.API
   , makeRequest
   , decodeResponse
   , responsePayload
+  , encodeRequest
+  , standardEncode
+  , standardEncodeJSON
+  , class StandardEncode
   ) where
 
 import Prelude
 
 import Data.Generic.Rep (class Generic)
-import Foreign (F)
-import Foreign.Class (class Decode, class Encode)
-import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
+import Data.Identity (Identity)
+import Data.Maybe (Maybe, maybe)
+import Data.Newtype (unwrap)
+import Foreign (F, Foreign, isNull, unsafeToForeign)
+import Foreign.Class (class Decode, class Encode, encode)
+import Foreign.Generic.Class (class EncodeRecord, class GenericDecode)
+import Foreign.NullOrUndefined (undefined)
 import Foreign.Object (Object)
-import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
+import Foreign.Object as Object
+import Global.Unsafe (unsafeStringify)
+import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON)
+import Prim.RowList (class RowToList)
 
 class RestEndpoint a b | a -> b, b -> a where
   makeRequest :: a -> Headers -> Request
   decodeResponse :: String -> F b
+  encodeRequest :: a -> Foreign
 
-defaultMakeRequest :: forall a x. Generic a x => GenericEncode x
-                   => Method -> URL -> Headers -> a -> Request
-defaultMakeRequest method url headers req = Request { method:  method
-                                                    , url: url
-                                                    , headers: headers
-                                                    , payload: defaultEncodeJSON req
-                                                    }
+standardEncodeJSON :: forall a. StandardEncode a => a -> String
+standardEncodeJSON = unsafeStringify <<< standardEncode
+
+convertNullToUndefined :: Foreign -> Foreign
+convertNullToUndefined a = if isNull a then undefined else a
+
+defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
+defaultMakeRequest method url headers req = 
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: unsafeStringify $ encodeRequest req
+          }
 
 defaultMakeRequest_ :: Method -> URL -> Headers -> Request
 defaultMakeRequest_ method url headers = Request { method:  method
@@ -81,7 +99,7 @@ type ErrorPayload = { error :: Boolean
                     , userMessage :: String
                     }
 
-newtype Response a = Response
+type Response a =
   { code :: Int
   , status :: String
   , response :: a
@@ -89,7 +107,7 @@ newtype Response a = Response
   }
 
 responsePayload :: forall a. Response a -> a
-responsePayload (Response r) = r.response
+responsePayload r = r.response
 
 derive instance genericMethod :: Generic Method _
 instance encodeMethod :: Encode Method where
@@ -120,14 +138,54 @@ instance encodeRequestG :: Encode Request where
 instance decodeRequestG :: Decode Request where
   decode = defaultDecode
 
-derive instance genericResponse :: Generic (Response a) _
-instance decodeResponseG :: Decode a => Decode (Response a) where
-  decode = defaultDecode
-instance encodeResponseG :: Encode a => Encode (Response a) where
-  encode = defaultEncode
-instance showResponse :: Show a => Show (Response a) where
-  show (Response r) = show r.code <> "_" <> r.status <> "_" <> (show r.response)
-
 derive instance genericGetReqBody :: Generic GetReqBody _
 instance decodeGetReqBody :: Decode GetReqBody where decode = defaultDecode
 instance encodeGetReqBody :: Encode GetReqBody where encode = defaultEncode
+
+
+-- | The `StandardEncode` class is a proxy to `Encode`
+-- | of the form `a -> Foreign` using `generics-rep` deriving.
+-- |
+-- | Requirement to proxy is to enable Maybe to encode into undefined, 
+-- | instead of null
+class StandardEncode a where
+  standardEncode :: a -> Foreign
+
+instance voidstandardEncode :: StandardEncode Void where
+  standardEncode = encode
+
+instance unitstandardEncode :: StandardEncode Unit where
+  standardEncode = encode
+
+instance foreignstandardEncode :: StandardEncode Foreign where
+  standardEncode = encode
+
+instance stringstandardEncode :: StandardEncode String where
+  standardEncode = encode
+
+instance charstandardEncode :: StandardEncode Char where
+  standardEncode = encode
+
+instance booleanstandardEncode :: StandardEncode Boolean where
+  standardEncode = encode
+
+instance numberstandardEncode :: StandardEncode Number where
+  standardEncode = encode
+
+instance intstandardEncode :: StandardEncode Int where
+  standardEncode = encode
+
+instance identitystandardEncode :: StandardEncode a => StandardEncode (Identity a) where
+  standardEncode = standardEncode <<< unwrap
+
+instance arraystandardEncode :: StandardEncode a => StandardEncode (Array a) where
+  standardEncode = unsafeToForeign <<< map standardEncode
+
+instance maybestandardEncode :: StandardEncode a => StandardEncode (Maybe a) where
+  standardEncode = maybe undefined standardEncode
+
+instance objectstandardEncode :: StandardEncode v => StandardEncode (Object v) where
+  standardEncode = unsafeToForeign <<< Object.mapWithKey (\_ -> standardEncode)
+
+instance recordstandardEncode :: (RowToList r rl, EncodeRecord r rl) => StandardEncode (Record r) where
+  standardEncode = encode

@@ -10,9 +10,8 @@ import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
 import Effect.Aff (Aff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
-import Foreign.Class (class Decode, class Encode)
-
-import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers, RegTokens)
+import Foreign.Class (class Decode)
+import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, RegTokens, Response)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
@@ -21,7 +20,7 @@ import Presto.Core.Types.Permission (Permission, PermissionStatus, PermissionRes
 data Authorization = RegistrationTokens RegTokens
 
 type UIResult s = Either Error s
-type APIResult s = Either ErrorResponse s
+type APIResult s = Either ErrorResponse (Response s)
 data Store = LocalStore | InMemoryStore
 newtype Control s = Control (AV.AVar s)
 
@@ -117,7 +116,7 @@ evalUI :: forall a b s. Interact Error a b => a -> (b -> Either Error s) -> Flow
 evalUI a from = withError show $ wrap $ RunUI (interactConv a from) identity
 
 -- | Call API being authorized.
-callAPI :: forall a b. Encode a => Decode b => RestEndpoint a b
+callAPI :: forall a b. StandardEncode a => Decode b => RestEndpoint a b
   => Headers -> a -> Flow (APIResult b)
 callAPI headers a = wrap $ CallAPI (apiInteract a headers) identity
 
