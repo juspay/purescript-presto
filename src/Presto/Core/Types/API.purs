@@ -31,7 +31,7 @@ import Data.Maybe (Maybe, maybe)
 import Data.Newtype (unwrap)
 import Foreign (F, Foreign, isNull, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode, encode)
-import Foreign.Generic.Class (class EncodeRecord, class GenericDecode)
+import Foreign.Generic.Class (class EncodeRecord, class GenericDecode, defaultOptions, encodeWithOptions)
 import Foreign.NullOrUndefined (undefined)
 import Foreign.Object (Object)
 import Foreign.Object as Object
@@ -188,4 +188,4 @@ instance objectstandardEncode :: StandardEncode v => StandardEncode (Object v) w
   standardEncode = unsafeToForeign <<< Object.mapWithKey (\_ -> standardEncode)
 
 instance recordstandardEncode :: (RowToList r rl, EncodeRecord r rl) => StandardEncode (Record r) where
-  standardEncode = encode
+  standardEncode = encodeWithOptions defaultOptions
