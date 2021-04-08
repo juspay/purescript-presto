@@ -2,16 +2,19 @@ module Presto.Core.Types.Language.Flow where
 
 import Prelude
 
+import Control.Monad.Except (runExcept)
 import Control.Monad.Free (Free, liftF)
-import Data.Either (Either, either)
+import Data.Either (Either, either, hush)
 import Data.Exists (Exists, mkExists)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..), maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
 import Effect.Aff (Aff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
+import Foreign (Foreign)
 import Foreign.Class (class Decode, class Encode)
-
+import Foreign.Generic (decodeJSON, encodeJSON)
+import Foreign.Object as Object
 import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers, RegTokens)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
@@ -63,6 +66,19 @@ getS key = wrap $ Get InMemoryStore key identity
 -- | Puts a string value into state using key.
 setS :: Key -> String -> Flow Unit
 setS key val = wrap $ Set InMemoryStore key val unit
+
+setLogFields :: Object.Object Foreign -> Flow Unit
+setLogFields fgn =
+  wrap $ Set InMemoryStore "log_fields" (encodeJSON fgn) unit
+
+getLogFields :: Flow (Object.Object Foreign)
+getLogFields =
+  wrap $ Get InMemoryStore "log_fields" fn
+  where
+  fn :: Maybe String -> Object.Object Foreign
+  fn Nothing = Object.empty
+  fn (Just a) =
+    maybe Object.empty identity <<< hush <<< runExcept <<< decodeJSON $ a
 
 -- | Deletes a string value from sharedprefs using key.
 delete :: Key -> Flow Unit
