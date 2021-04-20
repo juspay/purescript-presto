@@ -39,6 +39,8 @@ data FlowMethodF a s
   | CallAPI (Interaction (APIResult s)) (APIResult s -> a)
   | Get Store Key (Maybe String -> a)
   | Set Store Key String a
+  | GetForeign (Object.Object Foreign -> a)
+  | SetForeign Key Foreign a
   | Delete Store Key a
   | Fork (Flow s) (Control s -> a)
   | DoAff (Aff s) (s -> a)
@@ -67,18 +69,17 @@ getS key = wrap $ Get InMemoryStore key identity
 setS :: Key -> String -> Flow Unit
 setS key val = wrap $ Set InMemoryStore key val unit
 
-setLogFields :: Object.Object Foreign -> Flow Unit
-setLogFields fgn =
-  wrap $ Set InMemoryStore "log_fields" (encodeJSON fgn) unit
+setLogField :: Key -> Foreign -> Flow Unit
+setLogField key fgn =
+  wrap $ SetForeign key fgn unit
+
+getLogField :: Key -> Flow (Maybe Foreign)
+getLogField key =
+  wrap $ GetForeign (Object.lookup key)
 
 getLogFields :: Flow (Object.Object Foreign)
 getLogFields =
-  wrap $ Get InMemoryStore "log_fields" fn
-  where
-  fn :: Maybe String -> Object.Object Foreign
-  fn Nothing = Object.empty
-  fn (Just a) =
-    maybe Object.empty identity <<< hush <<< runExcept <<< decodeJSON $ a
+  wrap $ GetForeign identity
 
 -- | Deletes a string value from sharedprefs using key.
 delete :: Key -> Flow Unit
