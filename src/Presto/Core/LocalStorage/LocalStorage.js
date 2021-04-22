@@ -14,6 +14,10 @@ exports.setValueToLocalStoreImpl = function(key, value) {
   }
 };
 
-exports.deleteValueFromLocalStoreImpl = function(key){
-  JBridge.removeDataFromSharedPrefs(key);
+exports.deleteValueFromLocalStoreImpl = function(key) {
+  if (window.JOS && window.JOS.encryptAndStore) {
+    window.JOS.deleteEncKeys(key);
+  } else {
+    JBridge.removeDataFromSharedPrefs(key);
+  }
 };
