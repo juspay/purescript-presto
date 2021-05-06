@@ -8,6 +8,7 @@ import Data.Either (Either, either, hush)
 import Data.Exists (Exists, mkExists)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
+import Data.Tuple(Tuple(..))
 import Effect.Aff (Aff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
@@ -56,6 +57,10 @@ newtype FlowWrapper a = FlowWrapper (Exists (FlowMethodF a))
 
 -- | Free monadic language for making flows.
 type Flow a = Free FlowWrapper a
+
+
+defaultState :: Tuple (Object.Object String) (Object.Object Foreign)
+defaultState = Tuple Object.empty Object.empty
 
 -- | FlowWrapper for existential type.
 wrap :: forall a s. FlowMethodF a s -> Flow a
