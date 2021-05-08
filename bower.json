@@ -24,7 +24,8 @@
     "purescript-foreign-object": "^2.0.0",
     "purescript-record": "^2.0.0",
     "purescript-typelevel-prelude": ">= 4.0.0 < 6.0.0",
-    "purescript-tuples": "^5.0.0"
+    "purescript-tuples": "^5.0.0",
+    "purescript-debug": "^4.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^4.0.0",
