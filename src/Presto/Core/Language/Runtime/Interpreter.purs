@@ -16,15 +16,15 @@ import Control.Monad.Trans.Class (lift)
 import Control.Parallel (parOneOf)
 import Data.Either (Either(..))
 import Data.Exists (runExists)
-import Data.Tuple (Tuple(..))
+import Data.Tuple (Tuple(..), fst, snd)
+import Effect (Effect)
 import Effect.Aff (Aff, forkAff, delay)
 import Effect.Aff.AVar as AV
-import Effect (Effect)
 import Effect.Exception (Error, error)
+import Foreign (Foreign)
 import Foreign.JSON (parseJSON)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)
-
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
 import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..))
@@ -35,7 +35,7 @@ import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionS
 type AffError = (Error -> Effect Unit)
 type AffSuccess s = (s -> Effect Unit)
 
-type St = AV.AVar (Object.Object String)
+type St = AV.AVar (Tuple (Object.Object String) (Object.Object Foreign))
 type InterpreterSt a = S.StateT St Aff a
 
 type UIRunner = String -> Aff String
@@ -48,14 +48,14 @@ data Runtime = Runtime UIRunner PermissionRunner APIRunner
 
 
 readState :: InterpreterSt (Object.Object String)
-readState = S.get >>= (lift <<< AV.read)
+readState = S.get >>= (lift <<< map fst <<< AV.read)
 
 updateState :: Key -> String -> InterpreterSt Unit
 updateState key value = do
   stVar <- S.get
-  st <- lift $ AV.take stVar
+  (Tuple st stf) <- lift $ AV.take stVar
   let st' = Object.insert key value st
-  lift $ AV.put st' stVar
+  lift $ AV.put (Tuple st' stf) stVar
 
 interpretUI :: UIRunner -> InteractionF ~> Aff
 interpretUI uiRunner (Request fgnIn nextF) = do
@@ -104,6 +104,16 @@ interpret _ (Set LocalStore key value next) = do
 
 interpret _ (Set InMemoryStore key value next) = do
   updateState key value *> pure next
+
+interpret _ (GetForeign next) =
+  S.get >>= (lift <<< map (next <<< snd) <<< AV.read)
+
+interpret _ (SetForeign key fValue next) = do
+  stVar <- S.get
+  (Tuple st stf) <- lift $ AV.take stVar
+  let stf' = Object.insert key fValue stf
+  lift $ AV.put (Tuple st stf') stVar
+  pure next
 
 interpret _ (Delete LocalStore key next) = do
   lift $ deleteValueFromLocalStore key
