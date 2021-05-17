@@ -2,16 +2,20 @@ module Presto.Core.Types.Language.Flow where
 
 import Prelude
 
+import Control.Monad.Except (runExcept)
 import Control.Monad.Free (Free, liftF)
-import Data.Either (Either, either)
+import Data.Either (Either, either, hush)
 import Data.Exists (Exists, mkExists)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..), maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
+import Data.Tuple(Tuple(..))
 import Effect.Aff (Aff)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
+import Foreign (Foreign)
 import Foreign.Class (class Decode, class Encode)
-
+import Foreign.Generic (decodeJSON, encodeJSON)
+import Foreign.Object as Object
 import Presto.Core.Types.API (class RestEndpoint, ErrorResponse, Headers, RegTokens)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
@@ -36,6 +40,8 @@ data FlowMethodF a s
   | CallAPI (Interaction (APIResult s)) (APIResult s -> a)
   | Get Store Key (Maybe String -> a)
   | Set Store Key String a
+  | GetForeign (Object.Object Foreign -> a)
+  | SetForeign Key Foreign a
   | Delete Store Key a
   | Fork (Flow s) (Control s -> a)
   | DoAff (Aff s) (s -> a)
@@ -52,6 +58,10 @@ newtype FlowWrapper a = FlowWrapper (Exists (FlowMethodF a))
 -- | Free monadic language for making flows.
 type Flow a = Free FlowWrapper a
 
+
+defaultState :: Tuple (Object.Object String) (Object.Object Foreign)
+defaultState = Tuple Object.empty Object.empty
+
 -- | FlowWrapper for existential type.
 wrap :: forall a s. FlowMethodF a s -> Flow a
 wrap = liftF <<< FlowWrapper <<< mkExists
@@ -63,6 +73,18 @@ getS key = wrap $ Get InMemoryStore key identity
 -- | Puts a string value into state using key.
 setS :: Key -> String -> Flow Unit
 setS key val = wrap $ Set InMemoryStore key val unit
+
+setLogField :: Key -> Foreign -> Flow Unit
+setLogField key fgn =
+  wrap $ SetForeign key fgn unit
+
+getLogField :: Key -> Flow (Maybe Foreign)
+getLogField key =
+  wrap $ GetForeign (Object.lookup key)
+
+getLogFields :: Flow (Object.Object Foreign)
+getLogFields =
+  wrap $ GetForeign identity
 
 -- | Deletes a string value from sharedprefs using key.
 delete :: Key -> Flow Unit
