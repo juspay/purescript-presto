@@ -1,22 +1,28 @@
 exports.getValueFromLocalStoreImpl = function(key) {
   if (window.JOS && window.JOS.fetchAndDecrypt) {
-    return window.JOS.fetchAndDecrypt(key);
-  } else {
-    return JBridge.getFromSharedPrefs(key);
+    try {
+      return window.JOS.fetchAndDecrypt(key);
+    } catch (err) { }
   }
+  return JBridge.getFromSharedPrefs(key);
 };
 
 exports.setValueToLocalStoreImpl = function(key, value) {
   if (window.JOS && window.JOS.encryptAndStore) {
-    return window.JOS.encryptAndStore(key)(value);
-  } else {
-    return JBridge.setInSharedPrefs(key, value);
+    try {
+      return window.JOS.encryptAndStore(key)(value);
+    } catch (err) { }
   }
+  return JBridge.setInSharedPrefs(key, value);
 };
 
 exports.deleteValueFromLocalStoreImpl = function(key) {
   if (window.JOS && window.JOS.deleteEncKeys) {
-    window.JOS.deleteEncKeys(key);
+    try {
+      window.JOS.deleteEncKeys(key);
+    } catch (err) {
+      JBridge.removeDataFromSharedPrefs(key);
+    }
   } else {
     JBridge.removeDataFromSharedPrefs(key);
   }
