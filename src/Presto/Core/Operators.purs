@@ -37,7 +37,7 @@ until pred flow = do
 
 infixl 5 orElse as <|>
 
-onFirstRun :: forall s. Serializable s => Key -> Flow s -> Flow s
+onFirstRun :: forall s st. Serializable s => Key -> Flow st s -> Flow st s
 onFirstRun key flow = do
   mbRes <- load key
   case mbRes of
@@ -47,8 +47,8 @@ onFirstRun key flow = do
       save key value
       pure value
 
-inParallel :: Array (Flow Unit) -> Flow (Array (Control Unit))
+inParallel :: forall st. Array (Flow st Unit) -> Flow st (Array (Control Unit))
 inParallel = traverse fork
 
-inParallel' :: Array (Flow Unit) -> Flow Unit
+inParallel' :: forall st. Array (Flow st Unit) -> Flow st Unit
 inParallel' = traverse_ launch

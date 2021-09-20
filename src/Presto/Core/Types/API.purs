@@ -30,11 +30,11 @@ module Presto.Core.Types.API
 import Prelude
 
 import Data.Generic.Rep (class Generic)
+import Foreign (F, Foreign, isNull, unsafeToForeign)
+import Foreign.Class (class Decode, class Encode, encode)
 import Data.Identity (Identity)
 import Data.Maybe (Maybe, maybe)
 import Data.Newtype (unwrap)
-import Foreign (F, Foreign, isNull, unsafeToForeign)
-import Foreign.Class (class Decode, class Encode, encode)
 import Foreign.Generic.Class (class GenericDecode, defaultOptions, Options)
 import Type.Data.RowList (RLProxy(..))
 import Prim.Row (class Cons)
@@ -91,7 +91,7 @@ newtype Headers = Headers (Array Header)
 
 type URL = String
 
-data Method = POST | GET | PUT | DELETE
+data Method = POST | GET | PUT | DELETE | HEAD
 data GetReqBody = GetReqBody
 
 newtype Request = Request
@@ -128,6 +128,7 @@ instance showMethod :: Show Method where
   show GET = "GET"
   show PUT = "PUT"
   show DELETE = "DELETE"
+  show HEAD = "HEAD"
 
 derive instance genericHeader :: Generic Header _
 instance encodeHeaderG :: Encode Header where
