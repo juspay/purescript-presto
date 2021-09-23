@@ -15,6 +15,7 @@ module Presto.Core.Types.API
   , ErrorPayload
   , URL
   , defaultMakeRequest
+  , defaultMakeRequestString
   , defaultMakeRequest_
   , defaultDecodeResponse
   , makeRequest
