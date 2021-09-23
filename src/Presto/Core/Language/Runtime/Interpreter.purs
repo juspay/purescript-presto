@@ -21,7 +21,6 @@ import Effect (Effect)
 import Effect.Aff (Aff, forkAff, delay)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error, error)
-import Foreign (Foreign)
 import Foreign.JSON (parseJSON)
 import Foreign.Object as Object
 import Global.Unsafe (unsafeStringify)

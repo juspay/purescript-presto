@@ -60,11 +60,19 @@ convertNullToUndefined :: Foreign -> Foreign
 convertNullToUndefined a = if isNull a then undefined else a
 
 defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
-defaultMakeRequest method url headers req = 
+defaultMakeRequest method url headers req =
   Request { method:  method
           , url: url
           , headers: headers
           , payload: unsafeStringify $ encodeRequest req
+          }
+
+defaultMakeRequestString :: Method -> String -> Headers -> String -> Request
+defaultMakeRequestString method url headers req =
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: req
           }
 
 defaultMakeRequest_ :: Method -> URL -> Headers -> Request

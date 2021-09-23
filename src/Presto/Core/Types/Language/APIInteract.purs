@@ -10,7 +10,7 @@ import Debug.Trace (spy)
 import Foreign.Class (class Decode, decode, encode)
 import Foreign.Generic (decodeJSON)
 import Foreign.Object (empty)
-import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, Response(..), makeRequest, standardEncode)
+import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, Response, makeRequest)
 import Presto.Core.Types.Language.Interaction (Interaction, request)
 
 foreign import _trackException :: String -> String -> String -> String -> String -> Unit
