@@ -6,7 +6,6 @@ import Prelude
 
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
-import Debug.Trace (spy)
 import Foreign.Class (class Decode, decode, encode)
 import Foreign.Generic (decodeJSON)
 import Foreign.Object (empty)
@@ -20,28 +19,30 @@ apiInteract :: forall a b.
   StandardEncode a => Decode b => RestEndpoint a b
   => a -> Headers -> Interaction (Either ErrorResponse (Response b))
 apiInteract a headers = do
-  -- Using encode Instead of standardEncode, since maybe is already encoded at this stage
-  fgnOut <- spy "API RESPONSE" <$> request (encode (makeRequest a headers))
-  r <- pure $ do
-    (response :: Response String) <- spy "LEVEL 1 PARSE" $ (runExcept $ decode fgnOut)
-    (innerResponse :: b) <- runExcept $ decodeJSON response.response
-    pure $ response {response = innerResponse}
-    -- Try to decode the server's resopnse into the expected type
-  pure $ case spy "API RESPONSE PARSE" r of
-    Right resp -> Right resp
-    Left x -> Left $ 
-        case runExcept (decode fgnOut >>= decodeJSON) of
-          -- See if the server sent an error response, else create our own
-            Right (e :: ErrorResponse) -> do
-              let _ = _trackException "api_call" "sdk" "decode_error" "user_errors" $ show e
-              e
-            Left y -> do
-              let _ = _trackException "api_call" "sdk" "decode_error" "user_errors" "Unknown error"
-              { code : 0
-              , status : ""
-              , response : { error: true
-                            , errorMessage: show x <> "\n" <> show y
-                            , userMessage: "Unknown error"
-                            }
-              , responseHeaders : empty
-              }
+  fgnOut <- request (encode (makeRequest a headers))
+  pure $ case runExcept $ decode fgnOut of
+    Right (resp :: Response String) -> 
+      case runExcept $ decodeJSON resp.response of
+        Right (response :: b) -> Right $ { code : resp.code
+                                  , responseHeaders : resp.responseHeaders
+                                  , response : response
+                                  , status : resp.status
+                                  }
+        Left e -> Left $ { code : resp.code
+                        , responseHeaders : resp.responseHeaders
+                        , response : { error: true
+                                    , errorMessage: resp.response
+                                    , userMessage: show e <> "\n" <> resp.response
+                                    }
+                        , status : resp.status
+                        }
+    Left x -> Left $ do
+        let _ = _trackException "api_call" "sdk" "decode_error" "user_errors" "Unknown error"
+        { code : 0
+        , status : "FAILURE"
+        , response : { error: true
+                      , errorMessage: show x
+                      , userMessage: "CALL API FAILED" <> show x 
+                      }
+        , responseHeaders : empty
+        }
