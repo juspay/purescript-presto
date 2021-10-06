@@ -7,13 +7,14 @@ import Data.Either (Either, either)
 import Data.Exists (Exists, mkExists)
 import Data.Maybe (Maybe)
 import Data.Time.Duration (class Duration, Milliseconds, fromDuration)
-import Effect.Aff (Aff)
+import Effect (Effect)
+import Effect.Aff (Aff, Fiber, error, killFiber, launchAff_)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error)
-import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, RegTokens, Response)
 import Foreign (Foreign)
 import Foreign.Class (class Decode)
 import Foreign.Object as Object
+import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, RegTokens, Response)
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
@@ -24,7 +25,7 @@ data Authorization = RegistrationTokens RegTokens
 type UIResult s = Either Error s
 type APIResult s = Either ErrorResponse (Response s)
 data Store = LocalStore | InMemoryStore
-newtype Control s = Control (AV.AVar s)
+data Control s = Control (Fiber s) (AV.AVar s)
 
 type St st = AV.AVar (St' st)
 
@@ -61,6 +62,7 @@ data FlowMethodF a st s
   | Fork (Flow st s) (Control s -> a)
   | DoAff (Aff s) (s -> a)
   | Await (Control s) (s -> a)
+  | Kill (Control s) (Unit -> a)
   | Delay Milliseconds a
   | OneOf (Array (Flow st s)) (s -> a)
   | HandleError (Flow st (ErrorHandler s)) (s -> a)
@@ -195,6 +197,13 @@ await control = wrap $ Await control identity
 -- | Awaits a forked flow to be completed.
 await' :: forall s st. Control s -> Flow st Unit
 await' control = void $ wrap $ Await control identity
+
+-- | Kills a forked flow
+kill :: forall s st. Control s -> Flow st Unit
+kill control = wrap $ Kill control identity
+
+getKiller :: forall s st. Control s -> Flow st (Effect Unit)
+getKiller (Control f _) = pure $ launchAff_ (killFiber (error  "Received termination") f)
 
 -- | Delays computation for the given amount of time.
 delay :: forall d st. Duration d => d -> Flow st Unit

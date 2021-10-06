@@ -18,7 +18,7 @@ import Data.Either (Either(..))
 import Data.Exists (runExists)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Aff (Aff, forkAff, delay)
+import Effect.Aff (Aff, delay, forkAff, killFiber)
 import Effect.Aff.AVar as AV
 import Effect.Exception (Error, error)
 import Foreign.JSON (parseJSON)
@@ -74,14 +74,13 @@ interpretUI uiRunner (Request fgnIn nextF) = do
 runUIInteraction :: UIRunner -> Interaction ~> Aff
 runUIInteraction uiRunner = foldFree (interpretUI uiRunner)
 
--- TODO: canceller support
 forkFlow :: forall a e. Runtime -> Flow e a -> InterpreterSt e (Control a)
 forkFlow rt flow = do
   st <- S.get
   resultVar <- lift AV.empty
   let m = S.evalStateT (run rt flow) st
-  _ <- lift $ forkAff $ m >>= flip AV.put resultVar
-  pure $ Control resultVar
+  fiber <- lift $ forkAff $ m >>= (\a -> AV.put a resultVar *> pure a)
+  pure $ Control fiber resultVar
 
 runErrorHandler :: forall st s. ErrorHandler s -> InterpreterSt st s
 runErrorHandler (ThrowError msg) = throwError $ error msg
@@ -147,8 +146,12 @@ interpret r (Fork flow nextF) = forkFlow r flow >>= (pure <<< nextF)
 
 interpret _ (DoAff aff nextF) = lift aff >>= (pure <<< nextF)
 
-interpret _ (Await (Control resultVar) nextF) = do
+interpret _ (Await (Control _ resultVar) nextF) = do
   lift (AV.read resultVar) >>= (pure <<< nextF)
+
+interpret _ (Kill (Control fiber _) next) = do
+  lift (killFiber (error "Received termination") fiber)
+  pure (next unit)
 
 interpret _ (Delay duration next) = lift (delay duration) *> pure next
 

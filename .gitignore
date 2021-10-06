@@ -1,3 +1,5 @@
 /bower_components/
 /.pulp-cache/
 /output/
+.psc-ide-port
+/.psci_modules
