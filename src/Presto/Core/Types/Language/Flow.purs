@@ -205,6 +205,9 @@ kill control = wrap $ Kill control identity
 getKiller :: forall s st. Control s -> Flow st (Effect Unit)
 getKiller (Control f _) = pure $ launchAff_ (killFiber (error  "Received termination") f)
 
+getFiber :: forall s st. Control s -> Flow st (Fiber s)
+getFiber (Control f _) = pure f
+
 -- | Delays computation for the given amount of time.
 delay :: forall d st. Duration d => d -> Flow st Unit
 delay duration = wrap $ Delay (fromDuration duration) unit
