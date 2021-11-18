@@ -28,7 +28,14 @@ apiInteract a headers = do
                                   , response : response
                                   , status : resp.status
                                   }
-        Left e -> Left $ { code : resp.code
+        Left e -> 
+            case runExcept $ decode (encode resp.response) of
+              Right (response :: b) -> Right $ { code : resp.code
+                                        , responseHeaders : resp.responseHeaders
+                                        , response : response
+                                        , status : resp.status
+                                        }
+              Left e -> Left $ { code : resp.code
                         , responseHeaders : resp.responseHeaders
                         , response : { error: true
                                     , errorMessage: resp.response
