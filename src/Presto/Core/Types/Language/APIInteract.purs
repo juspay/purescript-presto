@@ -13,6 +13,7 @@ import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorRes
 import Presto.Core.Types.Language.Interaction (Interaction, request)
 
 foreign import _trackException :: String -> String -> String -> String -> String -> Unit
+foreign import _trackApiCall :: forall a. a -> Unit
 
 -- Special interact function for API.
 apiInteract :: forall a b.
@@ -20,6 +21,7 @@ apiInteract :: forall a b.
   => a -> Headers -> Interaction (Either ErrorResponse (Response b))
 apiInteract a headers = do
   fgnOut <- request (encode (makeRequest a headers))
+  let _ = _trackApiCall fgnOut
   pure $ case runExcept $ decode fgnOut of
     Right (resp :: Response String) -> 
       case runExcept $ decodeJSON resp.response of

@@ -22,3 +22,7 @@ exports._trackException = function(category){
             }
     }
 }
+
+exports._trackApiCall = function(resp){
+    tracker._trackAction("system")("debug")("api_response")(resp)();
+}
