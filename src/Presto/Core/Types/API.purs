@@ -15,6 +15,7 @@ module Presto.Core.Types.API
   , ErrorPayload
   , URL
   , defaultMakeRequest
+  , defaultMakeRequestWithoutLogs
   , defaultMakeRequestString
   , defaultMakeRequest_
   , defaultDecodeResponse
@@ -66,6 +67,16 @@ defaultMakeRequest method url headers req =
           , url: url
           , headers: headers
           , payload: unsafeStringify $ encodeRequest req
+          , logResponse: true
+          }
+
+defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
+defaultMakeRequestWithoutLogs method url headers req =
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: unsafeStringify $ encodeRequest req
+          , logResponse: false
           }
 
 defaultMakeRequestString :: Method -> String -> Headers -> String -> Request
@@ -74,6 +85,7 @@ defaultMakeRequestString method url headers req =
           , url: url
           , headers: headers
           , payload: req
+          , logResponse: true
           }
 
 defaultMakeRequest_ :: Method -> URL -> Headers -> Request
@@ -81,6 +93,7 @@ defaultMakeRequest_ method url headers = Request { method:  method
                                                  , url: url
                                                  , headers: headers
                                                  , payload: ""
+                                                 , logResponse: true
                                                  }
 
 defaultDecodeResponse :: forall a x. Generic a x => GenericDecode x
@@ -108,6 +121,7 @@ newtype Request = Request
   , url :: URL
   , payload :: String
   , headers :: Headers
+  , logResponse :: Boolean
   }
 
 type ErrorResponse = Response ErrorPayload
