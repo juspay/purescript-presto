@@ -1,4 +1,4 @@
-# <img src='https://s3.ap-south-1.amazonaws.com/presto-release/assets/presto-logo.png' height='60'>
+# <img src='./assets/presto-logo.png' height='60'>
 
 Write apps like equations!
 

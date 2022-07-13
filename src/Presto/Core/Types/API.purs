@@ -1,7 +1,8 @@
 module Presto.Core.Types.API
   ( class RestEndpoint
-  , ErrorPayload(..)
-  , ErrorResponse
+  , class EncodeRecord
+  , class StandardEncode
+  , class EncodeWithOptions
   , Method(..)
   , Header(..)
   , HeaderField
@@ -10,41 +11,89 @@ module Presto.Core.Types.API
   , RegTokens(..)
   , Request(..)
   , Response(..)
+  , ErrorResponse
+  , ErrorPayload
   , URL
   , defaultMakeRequest
+  , defaultMakeRequestWithoutLogs
+  , defaultMakeRequestString
   , defaultMakeRequest_
   , defaultDecodeResponse
   , makeRequest
   , decodeResponse
+  , encodeRecordWithOptions
+  , encodeWithOptions
   , responsePayload
+  , encodeRequest
+  , standardEncode
+  , standardEncodeJSON
   ) where
 
 import Prelude
 
 import Data.Generic.Rep (class Generic)
-import Foreign (F)
-import Foreign.Class (class Decode, class Encode)
-import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
-
-import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, defaultEncodeJSON)
+import Foreign (F, Foreign, isNull, unsafeToForeign)
+import Foreign.Class (class Decode, class Encode, encode)
+import Data.Identity (Identity)
+import Data.Maybe (Maybe, maybe)
+import Data.Newtype (unwrap)
+import Foreign.Generic.Class (class GenericDecode, defaultOptions, Options)
+import Type.Data.RowList (RLProxy(..))
+import Prim.Row (class Cons)
+import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
+import Prim.RowList (class RowToList, Nil, Cons)
+import Foreign.NullOrUndefined (undefined)
+import Foreign.Object (Object)
+import Foreign.Object as Object
+import Global.Unsafe (unsafeStringify)
+import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON)
+import Unsafe.Coerce (unsafeCoerce)
+import Record as Record
 
 class RestEndpoint a b | a -> b, b -> a where
   makeRequest :: a -> Headers -> Request
   decodeResponse :: String -> F b
+  encodeRequest :: a -> Foreign
 
-defaultMakeRequest :: forall a x. Generic a x => GenericEncode x
-                   => Method -> URL -> Headers -> a -> Request
-defaultMakeRequest method url headers req = Request { method:  method
-                                                    , url: url
-                                                    , headers: headers
-                                                    , payload: defaultEncodeJSON req
-                                                    }
+standardEncodeJSON :: forall a. StandardEncode a => a -> String
+standardEncodeJSON = unsafeStringify <<< standardEncode
+
+convertNullToUndefined :: Foreign -> Foreign
+convertNullToUndefined a = if isNull a then undefined else a
+
+defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
+defaultMakeRequest method url headers req =
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: unsafeStringify $ encodeRequest req
+          , logResponse: true
+          }
+
+defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
+defaultMakeRequestWithoutLogs method url headers req =
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: unsafeStringify $ encodeRequest req
+          , logResponse: false
+          }
+
+defaultMakeRequestString :: Method -> String -> Headers -> String -> Request
+defaultMakeRequestString method url headers req =
+  Request { method:  method
+          , url: url
+          , headers: headers
+          , payload: req
+          , logResponse: true
+          }
 
 defaultMakeRequest_ :: Method -> URL -> Headers -> Request
 defaultMakeRequest_ method url headers = Request { method:  method
                                                  , url: url
                                                  , headers: headers
                                                  , payload: ""
+                                                 , logResponse: true
                                                  }
 
 defaultDecodeResponse :: forall a x. Generic a x => GenericDecode x
@@ -64,7 +113,7 @@ newtype Headers = Headers (Array Header)
 
 type URL = String
 
-data Method = POST | GET | PUT | DELETE
+data Method = POST | GET | PUT | DELETE | HEAD
 data GetReqBody = GetReqBody
 
 newtype Request = Request
@@ -72,24 +121,25 @@ newtype Request = Request
   , url :: URL
   , payload :: String
   , headers :: Headers
-  }
-
-newtype Response a = Response
-  { code :: Int
-  , status :: String
-  , response :: a
-  }
-
-responsePayload :: forall a. Response a -> a
-responsePayload (Response r) = r.response
-
-newtype ErrorPayload = ErrorPayload
-  { error :: Boolean
-  , errorMessage :: String
-  , userMessage :: String
+  , logResponse :: Boolean
   }
 
 type ErrorResponse = Response ErrorPayload
+
+type ErrorPayload = { error :: Boolean
+                    , errorMessage :: String
+                    , userMessage :: String
+                    }
+
+type Response a =
+  { code :: Int
+  , status :: String
+  , response :: a
+  , responseHeaders :: Object (Array String)
+  }
+
+responsePayload :: forall a. Response a -> a
+responsePayload r = r.response
 
 derive instance genericMethod :: Generic Method _
 instance encodeMethod :: Encode Method where
@@ -101,6 +151,7 @@ instance showMethod :: Show Method where
   show GET = "GET"
   show PUT = "PUT"
   show DELETE = "DELETE"
+  show HEAD = "HEAD"
 
 derive instance genericHeader :: Generic Header _
 instance encodeHeaderG :: Encode Header where
@@ -119,23 +170,83 @@ instance encodeRequestG :: Encode Request where
   encode = defaultEncode
 instance decodeRequestG :: Decode Request where
   decode = defaultDecode
-  
-derive instance genericErrorPayload :: Generic ErrorPayload _
-instance encodeErrorPayload :: Encode ErrorPayload where
-  encode = defaultEncode
-instance decodeErrorPayload :: Decode ErrorPayload where
-  decode = defaultDecode
-instance showErrorPayload :: Show ErrorPayload where
-  show (ErrorPayload payload) = payload.userMessage
-
-derive instance genericResponse :: Generic (Response a) _
-instance decodeResponseG :: Decode a => Decode (Response a) where
-  decode = defaultDecode
-instance encodeResponseG :: Encode a => Encode (Response a) where
-  encode = defaultEncode
-instance showResponse :: Show a => Show (Response a) where
-  show (Response r) = show r.code <> "_" <> r.status <> "_" <> (show r.response)
 
 derive instance genericGetReqBody :: Generic GetReqBody _
 instance decodeGetReqBody :: Decode GetReqBody where decode = defaultDecode
 instance encodeGetReqBody :: Encode GetReqBody where encode = defaultEncode
+
+
+-- | The `StandardEncode` class is a proxy to `Encode`
+-- | of the form `a -> Foreign` using `generics-rep` deriving.
+-- |
+-- | Requirement to proxy is to enable Maybe to encode into undefined, 
+-- | instead of null
+class StandardEncode a where
+  standardEncode :: a -> Foreign
+
+instance voidstandardEncode :: StandardEncode Void where
+  standardEncode = encode
+
+instance unitstandardEncode :: StandardEncode Unit where
+  standardEncode = encode
+
+instance foreignstandardEncode :: StandardEncode Foreign where
+  standardEncode = encode
+
+instance stringstandardEncode :: StandardEncode String where
+  standardEncode = encode
+
+instance charstandardEncode :: StandardEncode Char where
+  standardEncode = encode
+
+instance booleanstandardEncode :: StandardEncode Boolean where
+  standardEncode = encode
+
+instance numberstandardEncode :: StandardEncode Number where
+  standardEncode = encode
+
+instance intstandardEncode :: StandardEncode Int where
+  standardEncode = encode
+
+instance identitystandardEncode :: StandardEncode a => StandardEncode (Identity a) where
+  standardEncode = standardEncode <<< unwrap
+
+instance arraystandardEncode :: StandardEncode a => StandardEncode (Array a) where
+  standardEncode = unsafeToForeign <<< map standardEncode
+
+instance maybestandardEncode :: StandardEncode a => StandardEncode (Maybe a) where
+  standardEncode = maybe undefined standardEncode
+
+instance objectstandardEncode :: StandardEncode v => StandardEncode (Object v) where
+  standardEncode = unsafeToForeign <<< Object.mapWithKey (\_ -> standardEncode)
+
+instance recordstandardEncode :: (RowToList r rl, EncodeRecord r rl) => StandardEncode (Record r) where
+  standardEncode = encodeWithOptions defaultOptions
+
+class EncodeWithOptions a where
+  encodeWithOptions :: Options -> a -> Foreign
+
+instance encodeWithOptionsRecord :: (RowToList r rl, EncodeRecord r rl) => EncodeWithOptions (Record r) where
+  encodeWithOptions opts = unsafeToForeign <<< encodeRecordWithOptions (RLProxy :: RLProxy rl) opts
+
+else instance encodeWithOptionsOther :: StandardEncode a => EncodeWithOptions a where
+  encodeWithOptions _ = standardEncode
+
+class EncodeRecord r rl | rl -> r where
+  encodeRecordWithOptions :: RLProxy rl -> Options -> Record r -> Object Foreign
+
+instance encodeRecordNil :: EncodeRecord () Nil where
+  encodeRecordWithOptions _ _ _ = Object.empty
+
+instance encodeRecordCons
+    :: ( Cons l a r_ r
+       , EncodeRecord r_ rl_
+       , IsSymbol l
+       , EncodeWithOptions a
+       )
+    => EncodeRecord r (Cons l a rl_)
+  where
+    encodeRecordWithOptions _ opts rec =
+      let obj = encodeRecordWithOptions (RLProxy :: RLProxy rl_) opts (unsafeCoerce rec)
+          l = reflectSymbol (SProxy :: SProxy l)
+       in Object.insert (opts.fieldTransform l) (encodeWithOptions opts (Record.get (SProxy :: SProxy l) rec)) obj
