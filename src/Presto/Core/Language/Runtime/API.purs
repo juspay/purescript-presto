@@ -11,11 +11,10 @@ import Data.Either (Either(..))
 import Effect.Aff (Aff)
 import Effect.Exception (error)
 import Foreign.Class (encode, decode)
-
-import Presto.Core.Types.API (Request) as API
+import Presto.Core.Types.API (Request, Response) as API
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignIn(..), ForeignOut(..))
 
-type APIRunner = API.Request -> Aff String
+type APIRunner = API.Request -> Aff (API.Response String)
 
 interpretAPI :: APIRunner -> InteractionF ~> Aff
 interpretAPI apiRunner (Request (ForeignIn fgnIn) nextF) = do
