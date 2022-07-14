@@ -1,5 +1,5 @@
-var path = require('path');
-var plugins = [];
+const path = require('path')
+const webpack = require('webpack');
 
 module.exports = {
   devtool: "source-map",
@@ -11,50 +11,16 @@ module.exports = {
     sourceMapFilename: "index_bundle.js.map"
   },
   module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loader: "babel-loader",
-        query: {
-          presets: ['es2015', 'react']
-        },
+    rules: [
+      { test: /\.js$/,
         exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          }
+        }
       },
-       {
-        test: /\.css$/,
-        use: [
-          { loader: "style-loader" },
-          { loader: "css-loader" }
-        ]
-      },
-      {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-         use: [
-          {
-            loader: 'file-loader',
-            options: {
-              query: {
-                name:'assets/[name].[ext]'
-              }
-            }
-          },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              query: {
-                mozjpeg: {
-                  progressive: true,
-                },
-                gifsicle: {
-                  interlaced: true,
-                },
-                optipng: {
-                  optimizationLevel: 7,
-                }
-              }
-            }
-          }]
-      }
     ]
   }
 }
