@@ -7,6 +7,9 @@ const getTracker = function(){
     if (typeof trackerJson._trackException != "function"){
         trackerJson._trackException = loopedFunction;
     }
+    if (typeof trackerJson._trackAction != "function"){
+        trackerJson._trackAction = loopedFunction;
+    }
     return trackerJson;
 }
 const tracker = getTracker();
