@@ -14,7 +14,7 @@ const getTracker = function(){
 }
 const tracker = getTracker();
 
-exports._trackException = function(category){
+export const _trackException = function(category){
     return function(subcategory){
             return function(label){
                 return function(key){
@@ -26,6 +26,6 @@ exports._trackException = function(category){
     }
 }
 
-exports._trackApiCall = function(resp){
+export const _trackApiCall = function(resp){
     tracker._trackAction("system")("debug")("api_response")(resp)();
 }

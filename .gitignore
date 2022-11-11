@@ -3,3 +3,6 @@
 /output/
 .psc-ide-port
 /.psci_modules
+.spago
+node_modules
+.purs-repl

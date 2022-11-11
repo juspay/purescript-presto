@@ -1,4 +1,4 @@
-exports.getValueFromLocalStoreImpl = function(key) {
+export const getValueFromLocalStoreImpl = function(key) {
   if (window.JOS && window.JOS.fetchAndDecrypt) {
     try {
       return window.JOS.fetchAndDecrypt(key);
@@ -7,7 +7,7 @@ exports.getValueFromLocalStoreImpl = function(key) {
   return JBridge.getFromSharedPrefs(key);
 };
 
-exports.setValueToLocalStoreImpl = function(key, value) {
+export const setValueToLocalStoreImpl = function(key, value) {
   if (window.JOS && window.JOS.encryptAndStore) {
     try {
       return window.JOS.encryptAndStore(key)(value);
@@ -16,7 +16,7 @@ exports.setValueToLocalStoreImpl = function(key, value) {
   return JBridge.setInSharedPrefs(key, value);
 };
 
-exports.deleteValueFromLocalStoreImpl = function(key) {
+export const deleteValueFromLocalStoreImpl = function(key) {
   if (window.JOS && window.JOS.deleteEncKeys) {
     try {
       window.JOS.deleteEncKeys(key);
