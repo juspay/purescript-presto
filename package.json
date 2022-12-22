@@ -1,5 +1,6 @@
 {
   "name": "purescript-presto",
+  "private": true,
   "version": "1.2.0",
   "description": "Presto purescript library with various monads.",
   "main": "index.js",
@@ -89,5 +90,9 @@
   },
   "author": "Juspay",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/juspay/purescript-presto#readme"
+  "homepage": "https://bitbucket.org/juspay/purescript-presto#readme",
+  "dependencies": {
+    "pulp": "^16.0.2",
+    "purescript": "^0.13.8"
+  }
 }
