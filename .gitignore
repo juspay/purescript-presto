@@ -3,3 +3,5 @@
 /output/
 .psc-ide-port
 /.psci_modules
+/Session.vim
+/node_modules
