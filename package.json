@@ -12,6 +12,7 @@
     "start": "spago build -w --before 'npm run eslint'",
     "eslint": "eslint src",
     "compile": "eslint src && spago build",
+    "spago:install": "spago install",
     "prepare": "husky install"
   },
   "repository": {
