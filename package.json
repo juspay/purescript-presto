@@ -1,7 +1,7 @@
 {
   "name": "purescript-presto",
   "private": true,
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Presto purescript library with various monads.",
   "main": "index.js",
   "directories": {
