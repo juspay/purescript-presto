@@ -1,0 +1,32 @@
+{
+  "env": { "browser": true },
+  "extends": "eslint:recommended",
+  "parserOptions": { "ecmaVersion": 2020, "sourceType": "module" },
+  "rules": {
+    "block-scoped-var": "error",
+    "no-caller": "error",
+    "no-extra-parens": "off",
+    "no-extend-native": "error",
+    "no-loop-func": "error",
+    "no-new": "error",
+    "no-return-assign": "error",
+    "no-sequences": "error",
+    "no-unused-expressions": "error",
+    "no-undef": "error",
+    "no-eq-null": "error",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "double"],
+    "strict": ["error", "global"],
+    "no-unused-vars": "off",
+    "no-empty": "off",
+    "radix": "off",
+    "no-param-reassign": "off",
+    "eqeqeq": "off",
+    "no-bitwise": "off",
+    "consistent-return": "off",
+    "guard-for-in": "off",
+    "no-mixed-spaces-and-tabs": "off",
+    "no-use-before-define": "off",
+    "no-dupe-keys": "off"
+  }
+}

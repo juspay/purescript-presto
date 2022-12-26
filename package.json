@@ -9,8 +9,9 @@
     "test": "test"
   },
   "scripts": {
-    "start": "npx pulp -w build",
-    "compile": "npx pulp build",
+    "start": "spago build -w --before 'npm run eslint'",
+    "eslint": "eslint src",
+    "compile": "eslint src && spago build",
     "prepare": "husky install"
   },
   "repository": {
@@ -85,14 +86,14 @@
     "commitlint-config-jira": "^1.6.4",
     "commitlint-plugin-jira-rules": "^1.6.4",
     "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.29.0",
     "husky": "^8.0.2",
-    "semantic-release": "^19.0.5"
+    "pulp": "^16.0.2",
+    "purescript": "^0.15.6",
+    "semantic-release": "^19.0.5",
+    "spago": "^0.20.9"
   },
   "author": "Juspay",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/juspay/purescript-presto#readme",
-  "dependencies": {
-    "pulp": "^16.0.2",
-    "purescript": "^0.13.8"
-  }
+  "homepage": "https://bitbucket.org/juspay/purescript-presto#readme"
 }

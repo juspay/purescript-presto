@@ -32,23 +32,22 @@ module Presto.Core.Types.API
 import Prelude
 
 import Data.Generic.Rep (class Generic)
-import Foreign (F, Foreign, isNull, unsafeToForeign)
+import Foreign (F, Foreign, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode, encode)
 import Data.Identity (Identity)
 import Data.Maybe (Maybe, maybe)
 import Data.Newtype (unwrap)
 import Foreign.Generic.Class (class GenericDecode, defaultOptions, Options)
-import Type.Data.RowList (RLProxy(..))
 import Prim.Row (class Cons)
-import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Prim.RowList (class RowToList, Nil, Cons)
 import Foreign.NullOrUndefined (undefined)
 import Foreign.Object (Object)
 import Foreign.Object as Object
-import Global.Unsafe (unsafeStringify)
-import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON)
+import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJSON, unsafeStringify)
 import Unsafe.Coerce (unsafeCoerce)
 import Record as Record
+import Type.Proxy (Proxy(..))
 
 class RestEndpoint a b | a -> b, b -> a where
   makeRequest :: a -> Headers -> Request
@@ -57,9 +56,6 @@ class RestEndpoint a b | a -> b, b -> a where
 
 standardEncodeJSON :: forall a. StandardEncode a => a -> String
 standardEncodeJSON = unsafeStringify <<< standardEncode
-
-convertNullToUndefined :: Foreign -> Foreign
-convertNullToUndefined a = if isNull a then undefined else a
 
 defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
 defaultMakeRequest method url headers req =
@@ -227,13 +223,14 @@ class EncodeWithOptions a where
   encodeWithOptions :: Options -> a -> Foreign
 
 instance encodeWithOptionsRecord :: (RowToList r rl, EncodeRecord r rl) => EncodeWithOptions (Record r) where
-  encodeWithOptions opts = unsafeToForeign <<< encodeRecordWithOptions (RLProxy :: RLProxy rl) opts
+  encodeWithOptions opts = unsafeToForeign <<< encodeRecordWithOptions (Proxy :: Proxy rl) opts
 
 else instance encodeWithOptionsOther :: StandardEncode a => EncodeWithOptions a where
   encodeWithOptions _ = standardEncode
 
+class EncodeRecord :: forall k. Row Type -> k -> Constraint
 class EncodeRecord r rl | rl -> r where
-  encodeRecordWithOptions :: RLProxy rl -> Options -> Record r -> Object Foreign
+  encodeRecordWithOptions :: Proxy rl -> Options -> Record r -> Object Foreign
 
 instance encodeRecordNil :: EncodeRecord () Nil where
   encodeRecordWithOptions _ _ _ = Object.empty
@@ -247,6 +244,6 @@ instance encodeRecordCons
     => EncodeRecord r (Cons l a rl_)
   where
     encodeRecordWithOptions _ opts rec =
-      let obj = encodeRecordWithOptions (RLProxy :: RLProxy rl_) opts (unsafeCoerce rec)
-          l = reflectSymbol (SProxy :: SProxy l)
-       in Object.insert (opts.fieldTransform l) (encodeWithOptions opts (Record.get (SProxy :: SProxy l) rec)) obj
+      let obj = encodeRecordWithOptions (Proxy :: Proxy rl_) opts (unsafeCoerce rec)
+          l = reflectSymbol (Proxy :: Proxy l)
+       in Object.insert (opts.fieldTransform l) (encodeWithOptions opts (Record.get (Proxy :: Proxy l) rec)) obj
