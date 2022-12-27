@@ -1,3 +1,10 @@
+## [2.0.1](https://bitbucket.org/juspay/purescript-presto/compare/v2.0.0...v2.0.1) (2022-12-27)
+
+
+### Bug Fixes
+
+* PICAF-19105: adding branch rule in Jenkins ([8b899de](https://bitbucket.org/juspay/purescript-presto/commits/8b899de86870ffbbefd5f36ad3854dd7342cdb49))
+
 # [2.0.0](https://bitbucket.org/juspay/purescript-presto/compare/v1.2.0...v2.0.0) (2022-12-26)
 
 
