@@ -9,11 +9,12 @@
     "test": "test"
   },
   "scripts": {
-    "start": "spago build -w --before 'npm run eslint'",
+    "start": "spago build -w --before 'npm run eslint' --purs-args '--censor-lib --strict'",
     "eslint": "eslint src",
-    "compile": "eslint src && spago build",
+    "compile": "eslint src && spago build --purs-args '--censor-lib --strict'",
     "spago:install": "spago install",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "eslint:fix": "eslint src --fix"
   },
   "repository": {
     "type": "git",
@@ -92,7 +93,8 @@
     "pulp": "^16.0.2",
     "purescript": "^0.15.6",
     "semantic-release": "^19.0.5",
-    "spago": "^0.20.9"
+    "spago": "^0.20.9",
+    "purescript-psa": "0.8.2"
   },
   "author": "Juspay",
   "license": "ISC",
