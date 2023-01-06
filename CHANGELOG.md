@@ -1,3 +1,10 @@
+## [2.0.2](https://bitbucket.org/juspay/purescript-presto/compare/v2.0.1...v2.0.2) (2023-01-06)
+
+
+### Bug Fixes
+
+* PICAF-18952: Updating es-lint rules and adding eslint:fix command ([3883e37](https://bitbucket.org/juspay/purescript-presto/commits/3883e3722043fc53f3bb100667dd7c2d50f4ac94))
+
 ## [2.0.1](https://bitbucket.org/juspay/purescript-presto/compare/v2.0.0...v2.0.1) (2022-12-27)
 
 
