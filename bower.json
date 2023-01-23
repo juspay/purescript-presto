@@ -18,7 +18,7 @@
     "purescript-exceptions": "^6.0.0",
     "purescript-exists": "^6.0.0",
     "purescript-free": "^7.0.0",
-    "purescript-foreign-generic": "git@bitbucket.org:juspay/purescript-foreign-generic.git#v12.0.0",
+    "purescript-foreign-generic": "git@ssh.bitbucket.juspay.net:picaf/purescript-foreign-generic.git#v12.0.0",
     "purescript-transformers": "^6.0.0",
     "purescript-foreign-object": "^4.0.0",
     "purescript-record": "^4.0.0",

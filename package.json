@@ -67,7 +67,7 @@
         "prerelease": true
       }
     ],
-    "repositoryUrl": "git@bitbucket.org:juspay/purescript-presto.git",
+    "repositoryUrl": "git@ssh.bitbucket.juspay.net:picaf/purescript-presto.git",
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
