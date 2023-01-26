@@ -9,7 +9,7 @@ Code as simple and precise as Mathematical Expressions. Presto is written in Pur
 [Slides](https://speakerdeck.com/vimalkumar/presto-at-functional-conf-2017)
 
 
-## Peerequisites
+## Prerequisites
 
 - [***npm***](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 - [***purescript***](https://github.com/purescript/documentation/blob/master/guides/Getting-Started.md)
