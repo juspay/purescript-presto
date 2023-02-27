@@ -14,6 +14,7 @@ module Presto.Core.Types.API
   , ErrorResponse
   , ErrorPayload
   , URL
+  , RestAPIOptions(..)
   , defaultMakeRequest
   , defaultMakeRequestWithoutLogs
   , defaultMakeRequestString
@@ -57,39 +58,43 @@ class RestEndpoint a b | a -> b, b -> a where
 standardEncodeJSON :: forall a. StandardEncode a => a -> String
 standardEncodeJSON = unsafeStringify <<< standardEncode
 
-defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
-defaultMakeRequest method url headers req =
+defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
+defaultMakeRequest method url headers req restAPIOptions =
   Request { method:  method
           , url: url
           , headers: headers
           , payload: unsafeStringify $ encodeRequest req
           , logResponse: true
+          , options: restAPIOptions
           }
 
-defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Request
-defaultMakeRequestWithoutLogs method url headers req =
+defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
+defaultMakeRequestWithoutLogs method url headers req restAPIOptions =
   Request { method:  method
           , url: url
           , headers: headers
           , payload: unsafeStringify $ encodeRequest req
           , logResponse: false
+          , options: restAPIOptions
           }
 
-defaultMakeRequestString :: Method -> String -> Headers -> String -> Request
-defaultMakeRequestString method url headers req =
+defaultMakeRequestString :: Method -> String -> Headers -> String -> Maybe RestAPIOptions -> Request
+defaultMakeRequestString method url headers req restAPIOptions =
   Request { method:  method
           , url: url
           , headers: headers
           , payload: req
           , logResponse: true
+          , options: restAPIOptions
           }
 
-defaultMakeRequest_ :: Method -> URL -> Headers -> Request
-defaultMakeRequest_ method url headers = Request { method:  method
+defaultMakeRequest_ :: Method -> URL -> Headers -> Maybe RestAPIOptions ->Request
+defaultMakeRequest_ method url headers restAPIOptions = Request { method:  method
                                                  , url: url
                                                  , headers: headers
                                                  , payload: ""
                                                  , logResponse: true
+                                                 , options: restAPIOptions
                                                  }
 
 defaultDecodeResponse :: forall a x. Generic a x => GenericDecode x
@@ -118,6 +123,12 @@ newtype Request = Request
   , payload :: String
   , headers :: Headers
   , logResponse :: Boolean
+  , options :: Maybe RestAPIOptions
+  }
+
+newtype RestAPIOptions = RestAPIOptions
+  { connectionTimeout :: Maybe Int
+  , readTimeout :: Maybe Int
   }
 
 type ErrorResponse = Response ErrorPayload
@@ -165,6 +176,12 @@ derive instance genericRequest :: Generic Request _
 instance encodeRequestG :: Encode Request where
   encode = defaultEncode
 instance decodeRequestG :: Decode Request where
+  decode = defaultDecode
+
+derive instance genericRestAPIOptions :: Generic RestAPIOptions _
+instance encodeRestAPIOptions :: Encode RestAPIOptions where
+  encode = defaultEncode
+instance decodeRestAPIOptions :: Decode RestAPIOptions where
   decode = defaultDecode
 
 derive instance genericGetReqBody :: Generic GetReqBody _

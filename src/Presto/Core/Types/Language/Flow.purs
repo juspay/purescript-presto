@@ -14,7 +14,7 @@ import Effect.Exception (Error)
 import Foreign (Foreign)
 import Foreign.Class (class Decode)
 import Foreign.Object as Object
-import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, RegTokens, Response)
+import Presto.Core.Types.API (class RestEndpoint, class StandardEncode, ErrorResponse, Headers, RegTokens, Response, RestAPIOptions(..))
 import Presto.Core.Types.Language.APIInteract (apiInteract)
 import Presto.Core.Types.Language.Interaction (class Interact, Interaction, interact, interactConv)
 import Presto.Core.Types.Language.Storage (Key, class Serializable, serialize, deserialize)
@@ -233,3 +233,8 @@ checkPermissions permissions = wrap $ CheckPermissions permissions identity
 -- | Tries to aquire permissions.
 takePermissions :: forall st. Array Permission -> Flow st (Array PermissionResponse)
 takePermissions permissions = wrap $ TakePermissions permissions identity
+
+makeRestAPIOptions :: Maybe Int -> Maybe Int -> RestAPIOptions
+makeRestAPIOptions connectionTimeout readTimeout = RestAPIOptions { connectionTimeout : connectionTimeout
+                                                  , readTimeout : readTimeout
+                                                  }
