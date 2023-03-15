@@ -5,6 +5,7 @@ module Presto.Core.Utils.Encoding
   , defaultEnumEncode
   , defaultDecodeJSON
   , defaultEncodeJSON
+  , unsafeStringify
   ) where
 
 import Prelude
@@ -14,6 +15,8 @@ import Foreign (Foreign, F)
 import Foreign.Generic (Options, defaultOptions, genericDecode, genericDecodeJSON, genericEncode, genericEncodeJSON)
 import Foreign.Generic.Class (class GenericDecode, class GenericEncode)
 import Foreign.Generic.EnumEncoding (class GenericDecodeEnum, class GenericEncodeEnum, genericDecodeEnum, genericEncodeEnum)
+
+foreign import unsafeStringify :: forall a. a -> String
 
 options :: Options
 options = defaultOptions { unwrapSingleConstructors = true }

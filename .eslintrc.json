@@ -1,0 +1,16 @@
+{
+    "env": {
+        "browser": true,
+        "es2015": true
+    },
+    "extends": "eslint:recommended",
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-empty": "off"
+    }
+}
