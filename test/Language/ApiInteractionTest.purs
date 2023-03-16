@@ -5,7 +5,7 @@ import Prelude
 import Control.Monad.State.Trans as S
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Eq as GEq
-import Data.Show.Generic as GShow
+import Data.Generic.Rep.Show as GShow
 import Data.Map (empty)
 import Effect.Aff (Aff)
 import Foreign.Class (class Decode, class Encode, encode)

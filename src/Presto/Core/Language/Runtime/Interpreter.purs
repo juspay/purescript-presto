@@ -23,13 +23,13 @@ import Effect.Aff.AVar as AV
 import Effect.Exception (Error, error)
 import Foreign.JSON (parseJSON)
 import Foreign.Object as Object
+import Global.Unsafe (unsafeStringify)
 import Presto.Core.Language.Runtime.API (APIRunner, runAPIInteraction)
 import Presto.Core.LocalStorage (deleteValueFromLocalStore, getValueFromLocalStore, setValueToLocalStore)
 import Presto.Core.Types.Language.Flow (ErrorHandler(..), Flow, FlowMethod, FlowMethodF(..), FlowWrapper(..), Store(..), Control(..), St)
 import Presto.Core.Types.Language.Interaction (InteractionF(..), Interaction, ForeignOut(..))
 import Presto.Core.Types.Language.Storage (Key)
 import Presto.Core.Types.Permission (Permission, PermissionResponse, PermissionStatus)
-import Presto.Core.Utils.Encoding (unsafeStringify)
 
 type AffError = (Error -> Effect Unit)
 type AffSuccess s = (s -> Effect Unit)
