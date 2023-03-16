@@ -5,7 +5,7 @@ import Control.Monad.State.Trans as S
 import Data.Map (empty)
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Show.Generic as GShow
+import Data.Generic.Rep.Show as GShow
 import Data.Generic.Rep.Eq as GEq
 import Effect.Aff (Aff)
 import Effect.Exception (error, Error)
