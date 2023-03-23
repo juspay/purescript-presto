@@ -1,3 +1,10 @@
+# [2.1.0](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/compare/v2.0.2...v2.1.0) (2023-03-23)
+
+
+### Features
+
+* PICAF-20619: Timeout for API's ([a99d323](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/commit/a99d32302f2ff31658d1cb534ef5f561e5642d8e))
+
 ## [2.0.2](https://bitbucket.org/juspay/purescript-presto/compare/v2.0.1...v2.0.2) (2023-01-06)
 
 
