@@ -166,8 +166,8 @@ evalUI a from = withError show $ wrap $ RunUI (interactConv a from) identity
 -- | Call API being authorized.
 callAPI :: forall a b st. StandardEncode a => Decode b => RestEndpoint a b
   => Headers -> a -> Flow st (APIResult b)
-callAPI headers a = wrap $ CallAPI (apiInteract a headers) identity
-
+callAPI headers a = wrap $ CallAPI (apiInteract a headers 0) identity
+ 
 -- | Gets some data from state and deserializes to `s` if possible.
 get :: forall s st. Serializable s => Key -> Flow st (Maybe s)
 get key = do

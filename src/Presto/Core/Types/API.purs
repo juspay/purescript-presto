@@ -19,6 +19,7 @@ module Presto.Core.Types.API
   , defaultMakeRequestWithoutLogs
   , defaultMakeRequestString
   , defaultMakeRequest_
+  , defaultMakeRequestWithFallback
   , defaultDecodeResponse
   , makeRequest
   , decodeResponse
@@ -37,7 +38,7 @@ import Foreign (F, Foreign, unsafeToForeign)
 import Foreign.Class (class Decode, class Encode, encode)
 import Data.Identity (Identity)
 import Data.Maybe (Maybe, maybe)
-import Data.Newtype (unwrap)
+import Data.Newtype (class Newtype,unwrap)
 import Foreign.Generic.Class (class GenericDecode, defaultOptions, Options)
 import Prim.Row (class Cons)
 import Data.Symbol (class IsSymbol, reflectSymbol)
@@ -66,7 +67,20 @@ defaultMakeRequest method url headers req restAPIOptions =
           , payload: unsafeStringify $ encodeRequest req
           , logResponse: true
           , options: restAPIOptions
+          , fallbackUrls : []
           }
+
+defaultMakeRequestWithFallback :: forall req resp. RestEndpoint req resp => Method -> URL -> Headers -> req -> Maybe RestAPIOptions -> Array URL -> Request
+defaultMakeRequestWithFallback method url headers req restAPIOptions fallbackUrls =
+    Request { method
+            , url
+            , headers
+            , payload: unsafeStringify $ encodeRequest req
+            , logResponse: true
+            , options: restAPIOptions
+            , fallbackUrls
+            }
+
 
 defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
 defaultMakeRequestWithoutLogs method url headers req restAPIOptions =
@@ -76,6 +90,7 @@ defaultMakeRequestWithoutLogs method url headers req restAPIOptions =
           , payload: unsafeStringify $ encodeRequest req
           , logResponse: false
           , options: restAPIOptions
+          , fallbackUrls : []
           }
 
 defaultMakeRequestString :: Method -> String -> Headers -> String -> Maybe RestAPIOptions -> Request
@@ -86,6 +101,7 @@ defaultMakeRequestString method url headers req restAPIOptions =
           , payload: req
           , logResponse: true
           , options: restAPIOptions
+          , fallbackUrls : []
           }
 
 defaultMakeRequest_ :: Method -> URL -> Headers -> Maybe RestAPIOptions ->Request
@@ -95,6 +111,7 @@ defaultMakeRequest_ method url headers restAPIOptions = Request { method:  metho
                                                  , payload: ""
                                                  , logResponse: true
                                                  , options: restAPIOptions
+                                                 , fallbackUrls : []
                                                  }
 
 defaultDecodeResponse :: forall a x. Generic a x => GenericDecode x
@@ -124,8 +141,10 @@ newtype Request = Request
   , headers :: Headers
   , logResponse :: Boolean
   , options :: Maybe RestAPIOptions
+  , fallbackUrls :: Array String
   }
 
+derive instance newtypeRequest :: Newtype Request _
 newtype RestAPIOptions = RestAPIOptions
   { connectionTimeout :: Maybe Int
   , readTimeout :: Maybe Int

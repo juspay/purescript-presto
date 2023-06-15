@@ -21,6 +21,7 @@
     , "transformers"
     , "tuples"
     , "unsafe-coerce" 
+    , "arrays"
     ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]
