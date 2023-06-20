@@ -70,15 +70,15 @@ defaultMakeRequest method url headers req restAPIOptions =
           , fallbackUrls : []
           }
 
-defaultMakeRequestWithFallback :: forall req resp. RestEndpoint req resp => Method -> URL -> Headers -> req -> Maybe RestAPIOptions -> Array URL -> Request
-defaultMakeRequestWithFallback method url headers req restAPIOptions fallbackUrls =
+defaultMakeRequestWithFallback :: forall req resp. RestEndpoint req resp => Method -> Domain -> Headers -> req -> Maybe RestAPIOptions -> Array Domain -> (Domain -> URL) -> Request
+defaultMakeRequestWithFallback method baseUrl headers req restAPIOptions fallbackBaseURL mkURL =
     Request { method
-            , url
+            , url : mkURL baseUrl
             , headers
             , payload: unsafeStringify $ encodeRequest req
             , logResponse: true
             , options: restAPIOptions
-            , fallbackUrls
+            , fallbackUrls : mkURL <$> fallbackBaseURL
             }
 
 
@@ -130,6 +130,7 @@ data Header = Header HeaderField HeaderValue
 newtype Headers = Headers (Array Header)
 
 type URL = String
+type Domain = String -- just for naming clarity
 
 data Method = POST | GET | PUT | DELETE | HEAD
 data GetReqBody = GetReqBody
