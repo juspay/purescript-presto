@@ -1,3 +1,15 @@
+# [2.2.0](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/compare/v2.1.0...v2.2.0) (2023-06-26)
+
+
+### Bug Fixes
+
+* PICAF-22934: Passing mkURL function to construct url at presto end ([fe8bbba](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/commit/fe8bbba4f2a56400c53f9c9f55b2bfb694c4062a))
+
+
+### Features
+
+* PICAF-22934: Added API-fallback url ([5d4ae68](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/commit/5d4ae6895527b90a3cefdf49d4f442c1afbfd9dc))
+
 # [2.1.0](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/compare/v2.0.2...v2.1.0) (2023-03-23)
 
 
