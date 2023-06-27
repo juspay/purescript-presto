@@ -1,3 +1,10 @@
+## [2.2.1](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/compare/v2.2.0...v2.2.1) (2023-06-27)
+
+
+### Bug Fixes
+
+* PICAF-22934: Logging the success api url ([1cbe852](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/commit/1cbe852ae359850a390fbaf9ba64bb7281ab4323))
+
 # [2.2.0](https://ssh.bitbucket.juspay.net/picaf/purescript-presto/compare/v2.1.0...v2.2.0) (2023-06-26)
 
 
