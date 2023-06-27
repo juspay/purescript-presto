@@ -29,3 +29,7 @@ export const _trackException = function(category){
 export const _trackApiCall = function(resp){
   tracker._trackAction("system")("debug")("api_response")(resp)();
 }
+
+export const _trackNetworkRetrySuccess = function(resp){
+  tracker._trackAction("system")("info")("network_retry_success")(resp)();
+}

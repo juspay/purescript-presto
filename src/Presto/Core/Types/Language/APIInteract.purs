@@ -7,7 +7,7 @@ import Prelude
 import Control.Monad.Except (runExcept)
 import Data.Array (length, (!!))
 import Data.Either (Either(..))
-import Data.Maybe (fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (modify)
 import Foreign.Class (class Decode, decode, encode)
 import Foreign.Generic (decodeJSON)
@@ -17,6 +17,8 @@ import Presto.Core.Types.Language.Interaction (Interaction, request)
 
 foreign import _trackException :: String -> String -> String -> String -> String -> Unit
 foreign import _trackApiCall :: forall a. a -> Unit
+
+foreign import _trackNetworkRetrySuccess :: forall a. a -> Unit
 
 -- Special interact function for API.
 apiInteract :: forall a b.
@@ -32,14 +34,18 @@ apiInteract a headers retryCount = do
   case runExcept $ decode fgnOut of
     Right (resp :: Response String) -> 
       case runExcept $ decodeJSON resp.response of
-        Right (response :: b) -> pure $ Right { code : resp.code
+        Right (response :: b) -> do
+              let _ = logSuccessUrl $ Just req.url
+              pure $ Right { code : resp.code
                                   , responseHeaders : resp.responseHeaders
                                   , response : response
                                   , status : resp.status
                                   }
         Left _ -> 
             case runExcept $ decode (encode resp.response) of
-              Right (response :: b) -> pure $ Right { code : resp.code
+              Right (response :: b) -> do
+                        let _ = logSuccessUrl $ Just req.url
+                        pure $ Right { code : resp.code
                                         , responseHeaders : resp.responseHeaders
                                         , response : response
                                         , status : resp.status
@@ -68,8 +74,12 @@ apiInteract a headers retryCount = do
                               
 
     where
+       logSuccessUrl :: Maybe String -> Unit
+       logSuccessUrl url
+          | retryCount > 0 = _trackNetworkRetrySuccess {success_url : encode url }
+          | otherwise      = unit 
        retryWithFallbackUrl :: Array URL -> ErrorResponse -> Interaction (Either ErrorResponse (Response b))
        retryWithFallbackUrl fallbackUrls currErrorResponse
-            | retryCount >= length fallbackUrls = pure $ Left currErrorResponse
-            | otherwise = apiInteract a headers (retryCount + 1)
+            | retryCount >= length fallbackUrls = let _ = logSuccessUrl Nothing in pure $ Left currErrorResponse
+            | otherwise =  apiInteract a headers (retryCount + 1)
              
