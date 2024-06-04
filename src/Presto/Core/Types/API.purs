@@ -50,7 +50,7 @@ import Presto.Core.Utils.Encoding (defaultDecode, defaultEncode, defaultDecodeJS
 import Unsafe.Coerce (unsafeCoerce)
 import Record as Record
 
-class RestEndpoint a b | a -> b, b -> a where
+class RestEndpoint a b | a -> b where
   makeRequest :: a -> Headers -> Request
   decodeResponse :: String -> F b
   encodeRequest :: a -> Foreign
