@@ -51,7 +51,7 @@ import Unsafe.Coerce (unsafeCoerce)
 import Record as Record
 import Type.Proxy (Proxy(..))
 
-class RestEndpoint a b | a -> b where
+class RestEndpoint a b | a -> b, b -> a where
   makeRequest :: a -> Headers -> Request
   decodeResponse :: String -> F b
   encodeRequest :: a -> Foreign
