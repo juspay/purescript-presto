@@ -22,7 +22,6 @@ module Presto.Core.Types.API
   , defaultMakeRequestWithFallback
   , defaultDecodeResponse
   , makeRequest
-  , decodeResponse
   , encodeRecordWithOptions
   , encodeWithOptions
   , responsePayload
@@ -51,15 +50,14 @@ import Unsafe.Coerce (unsafeCoerce)
 import Record as Record
 import Type.Proxy (Proxy(..))
 
-class RestEndpoint a b | a -> b, b -> a where
+class RestEndpoint a where
   makeRequest :: a -> Headers -> Request
-  decodeResponse :: String -> F b
   encodeRequest :: a -> Foreign
 
 standardEncodeJSON :: forall a. StandardEncode a => a -> String
 standardEncodeJSON = unsafeStringify <<< standardEncode
 
-defaultMakeRequest :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
+defaultMakeRequest :: forall a. RestEndpoint a => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
 defaultMakeRequest method url headers req restAPIOptions =
   Request { method:  method
           , url: url
@@ -70,7 +68,7 @@ defaultMakeRequest method url headers req restAPIOptions =
           , fallbackUrls : []
           }
 
-defaultMakeRequestWithFallback :: forall req resp. RestEndpoint req resp => Method -> Domain -> Headers -> req -> Maybe RestAPIOptions -> Array Domain -> (Domain -> URL) -> Request
+defaultMakeRequestWithFallback :: forall req. RestEndpoint req => Method -> Domain -> Headers -> req -> Maybe RestAPIOptions -> Array Domain -> (Domain -> URL) -> Request
 defaultMakeRequestWithFallback method baseUrl headers req restAPIOptions fallbackBaseURL mkURL =
     Request { method
             , url : mkURL baseUrl
@@ -82,7 +80,7 @@ defaultMakeRequestWithFallback method baseUrl headers req restAPIOptions fallbac
             }
 
 
-defaultMakeRequestWithoutLogs :: forall a x. RestEndpoint a x => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
+defaultMakeRequestWithoutLogs :: forall a. RestEndpoint a => Method -> URL -> Headers -> a -> Maybe RestAPIOptions -> Request
 defaultMakeRequestWithoutLogs method url headers req restAPIOptions =
   Request { method:  method
           , url: url
