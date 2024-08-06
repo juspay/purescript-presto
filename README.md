@@ -1,5 +1,3 @@
-# <img src='https://s3.ap-south-1.amazonaws.com/presto-release/assets/presto-logo.png' height='60'>
-
 Write apps like equations!
 
 Code as simple and precise as Mathematical Expressions. Presto is written in PureScript harnessing the powers of Functional Programming & Category Theory. What you get is scalable, performant code with elegant abstractions. Our attempt with Presto is to really simplify the app development process.
@@ -7,8 +5,6 @@ Code as simple and precise as Mathematical Expressions. Presto is written in Pur
 [Talk on Presto @FunctionalConf](https://www.youtube.com/watch?v=HLEwYghBjo8)
 <br/>
 [Slides](https://speakerdeck.com/vimalkumar/presto-at-functional-conf-2017)
-
-
 
 ## Quickstart
 
@@ -44,14 +40,13 @@ See [examples](https://github.com/juspay/purescript-presto/tree/master/examples/
 
 You can try out the below examples.
 
-* [Counter Vanilla](https://github.com/juspay/purescript-presto/tree/master/examples/counter-html)
-* [Bill Pay App using React](https://github.com/juspay/purescript-presto/tree/master/examples/billpay-react)
-* [Bill Pay App using Presto-UI](https://github.com/juspay/purescript-presto/tree/master/examples/billpay-presto-ui)
+- [Counter Vanilla](https://github.com/juspay/purescript-presto/tree/master/examples/counter-html)
+- [Bill Pay App using React](https://github.com/juspay/purescript-presto/tree/master/examples/billpay-react)
+- [Bill Pay App using Presto-UI](https://github.com/juspay/purescript-presto/tree/master/examples/billpay-presto-ui)
 
 ## Learning Presto
 
 [Presto Guide](https://juspay.gitbooks.io/presto-guide/content/) makes it easy to get started and start building great apps very quickly. We are continually improving Presto's documentation and welcome suggestions of topics we could explain in greater detail. Please send an email to presto@juspay.in with your requests.
-
 
 ## Add Presto to your existing project
 
@@ -61,10 +56,9 @@ bower i purescript-presto
 
 ## Apps in Production
 
-[***BHIM***](https://play.google.com/store/apps/details?id=in.org.npci.upiapp&hl=en) - Payments App, 17 Million Total Users
-<br>[***JuspaySafe***](https://juspay.in/juspay-safe) - Payments Browser, 800 Million Txns Processed
-<br>[***JuspayFuel***](https://play.google.com/store/apps/details?id=in.juspay.euler.pregel&hl=en) - Payments Solution for Gas Stations, 1000s of Outlets
-
+[**_BHIM_**](https://play.google.com/store/apps/details?id=in.org.npci.upiapp&hl=en) - Payments App, 17 Million Total Users
+<br>[**_JuspaySafe_**](https://juspay.in/juspay-safe) - Payments Browser, 800 Million Txns Processed
+<br>[**_JuspayFuel_**](https://play.google.com/store/apps/details?id=in.juspay.euler.pregel&hl=en) - Payments Solution for Gas Stations, 1000s of Outlets
 
 ## Community
 
@@ -75,6 +69,3 @@ Join a discussion or start one at our [forum](http://forum.juspayuniversity.in) 
 ## Contributing
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details.
-
-
-
