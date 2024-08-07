@@ -22,7 +22,7 @@ foreign import _trackNetworkRetrySuccess :: forall a. a -> Unit
 
 -- Special interact function for API.
 apiInteract :: forall a b.
-  StandardEncode a => Decode b => RestEndpoint a b
+  StandardEncode a => Decode b => RestEndpoint a
   => a -> Headers -> Int -> Interaction (Either ErrorResponse (Response b))
 apiInteract a headers retryCount = do
   let getUrl req = fromMaybe req.url $ ([req.url] <> req.fallbackUrls) !! retryCount
